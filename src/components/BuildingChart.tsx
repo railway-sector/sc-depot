@@ -1,19 +1,5 @@
 import { useEffect, useRef, useState, use } from "react";
-import {
-  stColumnLayer,
-  stFoundationLayer,
-  stFramingLayer,
-  columnsLayer,
-  floorsLayer,
-  wallsLayer,
-  furnitureLayer,
-  doorsLayer,
-  stairsLayer,
-  windowsLayer,
-  roofsLayer,
-  genericModelLayer,
-  exteriorShellLayer,
-} from "../layers";
+import { genericModelLayer, exteriorShellLayer } from "../layers";
 
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
@@ -22,10 +8,8 @@ import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
 import "../App.css";
 import {
   buildingSpotZoom,
-  buildingType,
   generateChartData,
   generateTotalProgress,
-  layerVisibleTrue,
   thousands_separators,
 } from "../Query";
 import "@esri/calcite-components/dist/components/calcite-label";
@@ -189,7 +173,7 @@ const BuildingChart = () => {
         x: am5.percent(60),
         y: am5.percent(97),
         marginTop: 20,
-        scale: 0.8,
+        scale: 0.9,
         layout: root.horizontalLayout,
       })
     );
@@ -199,7 +183,7 @@ const BuildingChart = () => {
       oversizedBehavior: "truncate",
       fill: am5.color("#ffffff"),
       fontSize: legendFontSize,
-      scale: 1.2,
+      // scale: 1.2,
       //textDecoration: "underline"
       //width: am5.percent(600),
       //fontWeight: '300',
@@ -219,8 +203,6 @@ const BuildingChart = () => {
           fill:
             fieldName === "incomp"
               ? am5.color(chartSeriesFillColorIncomp)
-              : fieldName === "ongoing"
-              ? am5.color(chartSeriesFillColorOngoing)
               : am5.color(chartSeriesFillColorComp),
           stroke: am5.color(chartBorderLineColor),
         })
@@ -316,7 +298,6 @@ const BuildingChart = () => {
     }
     makeSeries("Complete", "comp");
     makeSeries("Incomplete", "incomp");
-    makeSeries("Ongoing", "ongoing");
     chart.appear(1000, 100);
 
     return () => {

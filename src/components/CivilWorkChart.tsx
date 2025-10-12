@@ -168,7 +168,7 @@ const CivilWorkChart = () => {
         x: am5.percent(60),
         y: am5.percent(97),
         marginTop: 20,
-        scale: 0.8,
+        scale: 0.9,
         layout: root.horizontalLayout,
       })
     );
@@ -178,7 +178,7 @@ const CivilWorkChart = () => {
       oversizedBehavior: "truncate",
       fill: am5.color("#ffffff"),
       fontSize: legendFontSize,
-      scale: 1.2,
+      // scale: 1.2,
       //textDecoration: "underline"
       //width: am5.percent(600),
       //fontWeight: '300',
@@ -198,8 +198,6 @@ const CivilWorkChart = () => {
           fill:
             fieldName === "incomp"
               ? am5.color(chartSeriesFillColorIncomp)
-              : fieldName === "ongoing"
-              ? am5.color(chartSeriesFillColorOngoing)
               : am5.color(chartSeriesFillColorComp),
           stroke: am5.color(chartBorderLineColor),
         })
@@ -269,7 +267,6 @@ const CivilWorkChart = () => {
     }
     makeSeries("Complete", "comp");
     makeSeries("Incomplete", "incomp");
-    makeSeries("Ongoing", "ongoing");
     chart.appear(1000, 100);
 
     return () => {

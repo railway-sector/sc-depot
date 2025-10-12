@@ -199,14 +199,8 @@ export async function generateChartData_cw() {
     statisticType: "sum",
   });
 
-  var total_ongoing = new StatisticDefinition({
-    onStatisticField: "CASE WHEN Status = 2 THEN 1 ELSE 0 END",
-    outStatisticFieldName: "total_ongoing",
-    statisticType: "sum",
-  });
-
   var query = new Query();
-  query.outStatistics = [total_incomp, total_comp, total_ongoing];
+  query.outStatistics = [total_incomp, total_comp];
 
   const stFoundationCompile = stFoundationLayer_cw
     .queryFeatures(query)
@@ -214,8 +208,7 @@ export async function generateChartData_cw() {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stColumnsCompile = stColumnsLayer_cw
@@ -224,8 +217,7 @@ export async function generateChartData_cw() {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stFramingCompile = stFramingLayer_cw
@@ -234,8 +226,7 @@ export async function generateChartData_cw() {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   // const floorsCompile = floorsLayer_cw
@@ -289,19 +280,16 @@ export async function generateChartData_cw() {
       category: buildingType_cw[0].category,
       comp: stfoundation[1],
       incomp: stfoundation[0],
-      ongoing: stfoundation[2],
     },
     {
       category: buildingType_cw[1].category,
       comp: stcolumns[1],
       incomp: stcolumns[0],
-      ongoing: stcolumns[2],
     },
     {
       category: buildingType_cw[2].category,
       comp: stframing[1],
       incomp: stframing[0],
-      ongoing: stframing[2],
     },
     // {
     //   category: buildingType[4].category,
@@ -326,13 +314,10 @@ export async function generateChartData_cw() {
   const total =
     stfoundation[0] +
     stfoundation[1] +
-    stfoundation[2] +
     stcolumns[0] +
     stcolumns[1] +
-    stcolumns[2] +
     stframing[0] +
-    stframing[1] +
-    stframing[2];
+    stframing[1];
   // floors[0] +
   // floors[1] +
   // stairsRailing[0] +
@@ -460,14 +445,8 @@ export async function generateChartData(buildingname: any) {
     statisticType: "sum",
   });
 
-  var total_ongoing = new StatisticDefinition({
-    onStatisticField: "CASE WHEN Status = 2 THEN 1 ELSE 0 END",
-    outStatisticFieldName: "total_ongoing",
-    statisticType: "sum",
-  });
-
   var query = new Query();
-  query.outStatistics = [total_incomp, total_comp, total_ongoing];
+  query.outStatistics = [total_incomp, total_comp];
 
   const queryExpression = "Name = '" + buildingname + "'";
   const queryAll = "1=1";
@@ -506,9 +485,8 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stFoundationCompile = stFoundationLayer
@@ -517,9 +495,8 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stFramingCompile = stFramingLayer
@@ -528,9 +505,8 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const columnsCompile = columnsLayer
@@ -539,9 +515,8 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const furnitureCompile = furnitureLayer
@@ -550,18 +525,15 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
-
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const doorsCompile = doorsLayer.queryFeatures(query).then((response: any) => {
     var stats = response.features[0].attributes;
     const total_incomp = stats.total_incomp;
     const total_comp = stats.total_comp;
-    const total_ongoing = stats.total_ongoing;
 
-    return [total_incomp, total_comp, total_ongoing];
+    return [total_incomp, total_comp];
   });
 
   const floorsCompile = floorsLayer
@@ -570,9 +542,8 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stairsCompile = stairsLayer
@@ -581,27 +552,23 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const roofsCompile = roofsLayer.queryFeatures(query).then((response: any) => {
     var stats = response.features[0].attributes;
     const total_incomp = stats.total_incomp;
     const total_comp = stats.total_comp;
-    const total_ongoing = stats.total_ongoing;
 
-    return [total_incomp, total_comp, total_ongoing];
+    return [total_incomp, total_comp];
   });
 
   const wallsCompile = wallsLayer.queryFeatures(query).then((response: any) => {
     var stats = response.features[0].attributes;
     const total_incomp = stats.total_incomp;
     const total_comp = stats.total_comp;
-    const total_ongoing = stats.total_ongoing;
-
-    return [total_incomp, total_comp, total_ongoing];
+    return [total_incomp, total_comp];
   });
 
   const windowsCompile = windowsLayer
@@ -610,9 +577,8 @@ export async function generateChartData(buildingname: any) {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stcolumn = await stColumnCompile;
@@ -632,49 +598,41 @@ export async function generateChartData(buildingname: any) {
       category: buildingType[0].category,
       comp: stfoundation[1],
       incomp: stfoundation[0],
-      ongoing: stfoundation[2],
     },
     {
       category: buildingType[1].category,
       comp: stcolumn[1],
       incomp: stcolumn[0],
-      ongoing: stcolumn[2],
     },
     {
       category: buildingType[2].category,
       comp: stframing[1],
       incomp: stframing[0],
-      ongoing: stframing[2],
     },
     {
       category: buildingType[3].category,
       comp: roofs[1],
       incomp: roofs[0],
-      ongoing: roofs[2],
     },
     {
       category: buildingType[4].category,
       comp: floors[1],
       incomp: floors[0],
-      ongoing: floors[2],
     },
     {
       category: buildingType[5].category,
       comp: walls[1],
       incomp: walls[0],
-      ongoing: walls[2],
     },
     {
       category: buildingType[6].category,
       comp: columns[1],
       incomp: columns[0],
-      ongoing: columns[2],
     },
     {
       category: buildingType[7].category,
       comp: furniture[1] + doors[1] + stairs[1] + windows[1],
       incomp: furniture[0] + doors[0] + stairs[0] + windows[0],
-      ongoing: furniture[2] + doors[2] + stairs[2] + windows[2],
     },
   ];
 
