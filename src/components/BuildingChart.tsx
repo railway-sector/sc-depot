@@ -296,8 +296,8 @@ const BuildingChart = () => {
       // });
       legend.data.push(series);
     }
-    makeSeries("Complete", "comp");
-    makeSeries("Incomplete", "incomp");
+    makeSeries("Completed", "comp");
+    makeSeries("To be Constructed", "incomp");
     chart.appear(1000, 100);
 
     return () => {
