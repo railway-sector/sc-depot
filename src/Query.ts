@@ -6,11 +6,7 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
-import {
-  building_field,
-  buildingTypes,
-  type StatusStateType,
-} from "./uniqueValues";
+import { buildingTypes, type StatusStateType } from "./uniqueValues";
 import type { StatusTypenamesType } from "./uniqueValues";
 import BuildingComponentSublayer from "@arcgis/core/layers/buildingSublayers/BuildingComponentSublayer.js";
 import type BuildingSceneLayer from "@arcgis/core/layers/BuildingSceneLayer";
@@ -489,7 +485,6 @@ export const layersRevitAllVisible = ({
 
 export const highlightFilterBuildingSublayerView = ({
   layer,
-  // building,
   categorySelected,
   qExpression,
   sublayerNames,
@@ -533,9 +528,10 @@ export const highlightFilterBuildingSublayerView = ({
 //--- Click event on series
 export function clickSeries(
   series: any,
-  building: any,
-  types: any,
-  typeField: any,
+  q1Value: any,
+  q1Field: any,
+  chartCategoryTypes: any,
+  chartCategoryField: any,
   statusStatename: any,
   statusField: any,
   arcgisScene: any,
@@ -546,7 +542,9 @@ export function clickSeries(
   series.columns.template.events.on("click", (ev: any) => {
     const selected: any = ev.target.dataItem?.dataContext;
     const categorySelected: string = selected.category;
-    const find = types.find((emp: any) => emp.category === categorySelected);
+    const find = chartCategoryTypes.find(
+      (emp: any) => emp.category === categorySelected,
+    );
     const typeSelected = find?.value;
     const selectedStatus: number | null =
       statusStatename === "comp"
@@ -558,17 +556,17 @@ export function clickSeries(
             : 1;
 
     const expression_revit = queryExpression({
-      q1Value: building,
-      q1Field: building_field,
+      q1Value: q1Value,
+      q1Field: q1Field,
       chartCategory: typeSelected,
-      chartCategoryField: typeField,
+      chartCategoryField: chartCategoryField,
       status: selectedStatus,
       statusField: statusField,
       qExpression: undefined,
     });
 
     //--- Find sublayer
-    const selectedSublayerName = types.find(
+    const selectedSublayerName = chartCategoryTypes.find(
       (emp: any) => emp.category === categorySelected,
     )?.modelName;
 
@@ -576,7 +574,6 @@ export function clickSeries(
     // Building sublayers
     highlightFilterBuildingSublayerView({
       layer: buildingLayer,
-      building: building,
       categorySelected: categorySelected,
       qExpression: expression_revit,
       sublayerNames: selectedSublayerName,
@@ -592,10 +589,11 @@ export function clickSeries(
 export function makeSeries(
   root: any,
   chart: any,
-  building: any,
+  q1Value: any,
+  q1Field: any,
   data: any,
-  types: any, // buildingTypes
-  typeField: any,
+  chartCategoryTypes: any, // buildingTypes
+  chartCategoryField: any,
   statusTypename: any,
   statusStatename: any,
   statusField: any,
@@ -663,9 +661,10 @@ export function makeSeries(
   // Click series
   clickSeries(
     series,
-    building,
-    types,
-    typeField,
+    q1Value,
+    q1Field,
+    chartCategoryTypes,
+    chartCategoryField,
     statusStatename,
     statusField,
     arcgisScene,
@@ -682,9 +681,14 @@ interface chartType {
   root: any;
   chart: any;
   data: any;
-  building: any;
-  types: any;
-  typeField?: any;
+  q1Value?: any;
+  q1Field?: any;
+  q2Value?: any;
+  q2Field?: any;
+  q3Value?: any;
+  q3Field?: any;
+  chartCategoryTypes: any;
+  chartCategoryField?: any;
   // 'statusTypename' and 'statusStatename': E.g., you can add or delete status you wish to add in stacked columns.
   statusTypename: StatusTypenamesType[]; // order has no effect on statistics
   statusStatename: StatusStateType[]; // order affects the order displayed in stacked column charts
@@ -708,9 +712,10 @@ export function chartRenderer({
   root,
   chart,
   data,
-  types,
-  typeField,
-  building,
+  chartCategoryTypes,
+  chartCategoryField,
+  q1Value,
+  q1Field,
   statusTypename,
   statusStatename,
   statusField,
@@ -810,10 +815,11 @@ export function chartRenderer({
       makeSeries(
         root,
         chart,
-        building,
+        q1Value,
+        q1Field,
         data,
-        types, // buildingTypes
-        typeField,
+        chartCategoryTypes, // buildingTypes
+        chartCategoryField,
         statustype,
         statusStatename[index],
         statusField,
