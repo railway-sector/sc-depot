@@ -6,7 +6,7 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
-import { buildingTypes, type StatusStateType } from "./uniqueValues";
+import { type StatusStateType } from "./uniqueValues";
 import type { StatusTypenamesType } from "./uniqueValues";
 import BuildingComponentSublayer from "@arcgis/core/layers/buildingSublayers/BuildingComponentSublayer.js";
 import type BuildingSceneLayer from "@arcgis/core/layers/BuildingSceneLayer";
@@ -402,9 +402,6 @@ export async function chartDataStackColumns({
 //--------------------------------//
 //    Chart Renderer parameters   //
 //--------------------------------//
-// ****************************
-//    Chart Parameters
-// ****************************
 //-- Responsve parameters
 export function responsiveChart(chart: any, legend: any) {
   chart.onPrivate("width", (width: any) => {
@@ -427,6 +424,7 @@ export function responsiveChart(chart: any, legend: any) {
 //--- LayerView Filter and Highlight
 interface layerViewQueryType {
   layer?: any;
+  chartCategoryTypes?: any;
   categorySelected?: any;
   building?: any;
   qExpression?: any;
@@ -440,6 +438,7 @@ interface layerViewQueryType {
 
 //--- Filter sublayers when clicking column chart series
 export const sublayersQuery = (
+  chartCategoryTypes: any,
   categorySelected: any,
   expression: any,
   sublayersCollection: any,
@@ -447,7 +446,7 @@ export const sublayersQuery = (
   sublayersCollection.map((sublayer: any) => {
     if (
       sublayer.name ===
-      buildingTypes.find((item: any) => item.category === categorySelected)
+      chartCategoryTypes.find((item: any) => item.category === categorySelected)
         .modelName
     ) {
       sublayer.layer.definitionExpression = expression;
@@ -485,6 +484,7 @@ export const layersRevitAllVisible = ({
 
 export const highlightFilterBuildingSublayerView = ({
   layer,
+  chartCategoryTypes,
   categorySelected,
   qExpression,
   sublayerNames,
@@ -505,7 +505,12 @@ export const highlightFilterBuildingSublayerView = ({
     });
 
     setSublayerViewFilter(sublayerView);
-    sublayersQuery(categorySelected, qExpression, sublayersCollection);
+    sublayersQuery(
+      chartCategoryTypes,
+      categorySelected,
+      qExpression,
+      sublayersCollection,
+    );
 
     //--- Reset filter and highlight when sequentially clicking column series
     //--- Without this, reset button will not completely work.
@@ -574,6 +579,7 @@ export function clickSeries(
     // Building sublayers
     highlightFilterBuildingSublayerView({
       layer: buildingLayer,
+      chartCategoryTypes: chartCategoryTypes,
       categorySelected: categorySelected,
       qExpression: expression_revit,
       sublayerNames: selectedSublayerName,
