@@ -85,6 +85,7 @@ const CivilWorkChart = () => {
   // const chartSeriesFillColorOngoing = "#d3d3d3"; // orfiginal: #FF0000
   const chartBorderLineColor = "#00c5ff";
   const chartBorderLineWidth = 0.4;
+  const chartPaddingRightIconLabelSpace = 10;
 
   //-------------------------------------//
   //    Responsive Chart parameters      //
@@ -157,6 +158,7 @@ const CivilWorkChart = () => {
       setSublayerViewFilter: setSublayerViewFilter,
       sublayersCollection: sublayersCivilAll,
       highlightedSublayerView: highlightedSublayerView,
+      chartPaddingRightIconLabelSpace: chartPaddingRightIconLabelSpace,
       new_chartIconSize: new_chartIconSize,
       new_axisFontSize: new_axisFontSize,
       legend: legend,
@@ -204,7 +206,6 @@ const CivilWorkChart = () => {
           marginLeft: "15px",
           marginRight: "15px",
           justifyContent: "space-between",
-          marginBottom: "10px",
         }}
       >
         <img

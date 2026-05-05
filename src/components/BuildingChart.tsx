@@ -79,6 +79,7 @@ const BuildingChart = () => {
       q1Field: building_field,
       chartCategoryTypes: buildingTypes,
       chartCategoryField: undefined,
+      chartCategoryValueType: "string", //
       layers: [
         stFoundationLayer,
         stColumnLayer,
@@ -111,6 +112,7 @@ const BuildingChart = () => {
   // const chartSeriesFillColorOngoing = "#d3d3d3"; // orfiginal: #FF0000
   const chartBorderLineColor = "#00c5ff";
   const chartBorderLineWidth = 0.4;
+  const chartPaddingRightIconLabelSpace = 10;
 
   //-------------------------------------//
   //    Responsive Chart parameters      //
@@ -175,7 +177,7 @@ const BuildingChart = () => {
       chartCategoryField: undefined,
       q1Value: buildings,
       q1Field: building_field,
-      statusTypename: ["To be Constructed", "Under Construction", "Completed"], //["Completed", "To be Constructed", "Under Construction"],
+      statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
       statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
       statusField: status_field,
       seriesStatusColor: chart_colors,
@@ -185,6 +187,7 @@ const BuildingChart = () => {
       setSublayerViewFilter: setSublayerViewFilter,
       sublayersCollection: sublayersAll,
       highlightedSublayerView: highlightedSublayerView,
+      chartPaddingRightIconLabelSpace: chartPaddingRightIconLabelSpace,
       new_chartIconSize: new_chartIconSize,
       new_axisFontSize: new_axisFontSize,
       legend: legend,
@@ -237,7 +240,6 @@ const BuildingChart = () => {
           marginLeft: "15px",
           marginRight: "15px",
           justifyContent: "space-between",
-          marginBottom: "10px",
         }}
       >
         <img

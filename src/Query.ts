@@ -7,7 +7,8 @@ import * as am5xy from "@amcharts/amcharts5/xy";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import { type StatusStateType } from "./uniqueValues";
-import type { StatusTypenamesType } from "./uniqueValues";
+import type { StatusTypenamesType, TypeFieldType } from "./uniqueValues";
+
 import BuildingComponentSublayer from "@arcgis/core/layers/buildingSublayers/BuildingComponentSublayer.js";
 import type BuildingSceneLayer from "@arcgis/core/layers/BuildingSceneLayer";
 
@@ -217,7 +218,7 @@ interface queryBuildingLayersType {
   chartCategoryTypes?: any;
   chartCategory?: any;
   chartCategoryField?: any;
-  chartCategoryValueType?: any;
+  chartCategoryValueType?: TypeFieldType;
   layers:
     | [
         BuildingComponentSublayer,
@@ -710,7 +711,7 @@ interface chartType {
   new_chartIconSize: any;
   new_axisFontSize: any;
   chartIconPositionX?: any;
-  chartPaddingRightIconLabel?: any;
+  chartPaddingRightIconLabelSpace?: any;
   legend: any;
   updateChartPanelwidth: any;
 }
@@ -735,7 +736,7 @@ export function chartRenderer({
   new_chartIconSize,
   new_axisFontSize,
   chartIconPositionX,
-  chartPaddingRightIconLabel,
+  chartPaddingRightIconLabelSpace,
   legend,
   updateChartPanelwidth,
 }: chartType) {
@@ -767,8 +768,8 @@ export function chartRenderer({
   );
 
   yRenderer.labels.template.setAll({
-    paddingRight: chartPaddingRightIconLabel
-      ? chartPaddingRightIconLabel
+    paddingRight: chartPaddingRightIconLabelSpace
+      ? chartPaddingRightIconLabelSpace
       : null,
   });
 
