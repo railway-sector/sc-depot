@@ -11,17 +11,14 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
-import {
-  thousands_separators,
-  chartDataStackColumns,
-  chartRenderer,
-  queryDefinitionExpression,
-  queryExpression,
-} from "../Query";
+import { thousands_separators } from "../Query";
 import { chart_colors, civilworkTypes, status_field } from "../uniqueValues";
 import { MyContext } from "../contexts/MyContext";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
+import { chartDataStackColumns } from "../ChartDataGenerator";
+import { queryDefinitionExpression } from "../QueryExpression";
+import { chartRenderer, resetAllLayers } from "../ChartRenderer";
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -59,8 +56,7 @@ const CivilWorkChart = () => {
     });
 
     chartDataStackColumns({
-      q1Value: undefined,
-      q1Field: undefined,
+      qChart: undefined,
       chartCategoryTypes: civilworkTypes,
       chartCategoryField: undefined,
       layers: [stFoundationLayer_cw, stColumnsLayer_cw, stFramingLayer_cw],
@@ -182,15 +178,8 @@ const CivilWorkChart = () => {
         highlightedSublayerView.current.remove();
     }
 
-    queryDefinitionExpression({
-      queryExpression: queryExpression({
-        qExpression: "1=1",
-      }),
-      featureLayer: [
-        stFoundationLayer_cw,
-        stColumnsLayer_cw,
-        stFramingLayer_cw,
-      ],
+    resetAllLayers({
+      layers: sublayersCivilAll,
     });
   }, [resetButtonClicked]);
 
@@ -265,6 +254,7 @@ const CivilWorkChart = () => {
         style={{
           width: "50%",
           marginLeft: "30%",
+          marginTop: "4%",
           // paddingTop: "10%",
         }}
       >

@@ -5,19 +5,13 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
-import {
-  buildingSpotZoom,
-  chartDataStackColumns,
-  chartRenderer,
-  queryDefinitionExpression,
-  queryExpression,
-  thousands_separators,
-} from "../Query";
+import { buildingSpotZoom, thousands_separators } from "../Query";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { MyContext } from "../contexts/MyContext";
 import {
   columnsLayer,
   floorsLayer,
+  queryc,
   stColumnLayer,
   stFoundationLayer,
   stFramingLayer,
@@ -32,6 +26,9 @@ import {
   status_field,
 } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
+import { chartDataStackColumns } from "../ChartDataGenerator";
+import { queryDefinitionExpression } from "../QueryExpression";
+import { chartRenderer, resetAllLayers } from "../ChartRenderer";
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -59,11 +56,10 @@ const BuildingChart = () => {
 
   const chartID = "station-bar";
   useEffect(() => {
+    queryc.qValues = [buildings];
+    queryc.qFields = [building_field];
     queryDefinitionExpression({
-      queryExpression: queryExpression({
-        q1Value: buildings,
-        q1Field: building_field,
-      }),
+      queryExpression: queryc.queryExpression(),
       featureLayer: [
         stFoundationLayer,
         stColumnLayer,
@@ -75,8 +71,7 @@ const BuildingChart = () => {
     });
 
     chartDataStackColumns({
-      q1Value: buildings,
-      q1Field: building_field,
+      qChart: queryc.queryExpression(),
       chartCategoryTypes: buildingTypes,
       chartCategoryField: undefined,
       chartCategoryValueType: "string", //
@@ -212,19 +207,11 @@ const BuildingChart = () => {
         highlightedSublayerView.current.remove();
     }
 
-    queryDefinitionExpression({
-      queryExpression: queryExpression({
-        q1Value: buildings,
-        q1Field: building_field,
-      }),
-      featureLayer: [
-        stFoundationLayer,
-        stColumnLayer,
-        stFramingLayer,
-        floorsLayer,
-        wallsLayer,
-        columnsLayer,
-      ],
+    resetAllLayers({
+      layers: sublayersAll,
+      qExpression: !buildings
+        ? undefined
+        : `${building_field} = '${buildings}'`,
     });
   }, [resetButtonClicked]);
 
@@ -299,6 +286,7 @@ const BuildingChart = () => {
         style={{
           width: "50%",
           marginLeft: "30%",
+          marginTop: "4%",
           // paddingTop: "10%",
         }}
       >

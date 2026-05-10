@@ -15,6 +15,44 @@ import UniqueValueRenderer from "@arcgis/core/renderers/UniqueValueRenderer";
 import CustomContent from "@arcgis/core/popup/content/CustomContent";
 import PopupTemplate from "@arcgis/core/PopupTemplate";
 import GroupLayer from "@arcgis/core/layers/GroupLayer";
+import QueryExpressionLayers from "query-layers-expression";
+import { statusStateValues } from "./uniqueValues";
+
+export const queryc = new QueryExpressionLayers(
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  "string",
+  0,
+  undefined,
+  undefined,
+  undefined,
+);
+
+export const queryc2 = new QueryExpressionLayers(
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  "string",
+  0,
+  undefined,
+  undefined,
+  undefined,
+);
+
+export const queryc3 = new QueryExpressionLayers(
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  "string",
+  0,
+  undefined,
+  undefined,
+  undefined,
+);
 
 export const drone_video_point_layer = new FeatureLayer({
   portalItem: {
@@ -472,61 +510,28 @@ const colorStatus = [
   [0, 112, 255, 0.8], // Completed
 ];
 
+const uniqueValueInfos = statusStateValues.map((status: any, index: any) => {
+  return Object.assign({
+    value: status,
+    symbol: new MeshSymbol3D({
+      symbolLayers: [
+        new FillSymbol3DLayer({
+          material: {
+            color: colorStatus[index],
+            colorMixMode: "replace",
+          },
+          edges: new SolidEdges3D({
+            color: [225, 225, 225, 0.3],
+          }),
+        }),
+      ],
+    }),
+  });
+});
+
 const renderer = new UniqueValueRenderer({
   field: "Status",
-  uniqueValueInfos: [
-    {
-      value: 1,
-      label: "To be Constructed",
-      symbol: new MeshSymbol3D({
-        symbolLayers: [
-          new FillSymbol3DLayer({
-            material: {
-              color: colorStatus[0],
-              colorMixMode: "replace",
-            },
-            edges: new SolidEdges3D({
-              color: [225, 225, 225, 0.3],
-            }),
-          }),
-        ],
-      }),
-    },
-    // {
-    //   value: 2,
-    //   label: "Under Construction",
-    //   symbol: new MeshSymbol3D({
-    //     symbolLayers: [
-    //       new FillSymbol3DLayer({
-    //         material: {
-    //           color: colorStatus[1],
-    //           colorMixMode: "replace",
-    //         },
-    //         edges: new SolidEdges3D({
-    //           color: [225, 225, 225, 0.3],
-    //         }),
-    //       }),
-    //     ],
-    //   }),
-    // },
-    {
-      value: 4,
-      label: "Completed",
-      symbol: new MeshSymbol3D({
-        symbolLayers: [
-          new FillSymbol3DLayer({
-            material: {
-              color: colorStatus[3],
-              colorMixMode: "replace",
-            },
-            edges: new SolidEdges3D({
-              color: [225, 225, 225, 0.3],
-            }),
-          }),
-        ],
-      }),
-    },
-  ],
+  uniqueValueInfos: uniqueValueInfos,
 });
 
 const rendererNotMonitoring = new SimpleRenderer({

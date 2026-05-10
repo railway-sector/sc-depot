@@ -2,6 +2,7 @@ export const type_field = "Type";
 export const status_field = "Status";
 export const category_field = "Category";
 export const building_field = "Name";
+export const statusStateValues = [1, 2, 3, 4];
 
 //--- type definitions
 export type StatusTypenamesType =

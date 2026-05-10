@@ -74,12 +74,12 @@ function MainChart() {
 
         {/* CalciteTab: Building */}
         <calcite-tab>
-          {buildingLayerLoaded === "loaded" ? <BuildingChart /> : ""}
+          {buildingLayerLoaded === "loaded" && <BuildingChart />}
         </calcite-tab>
 
         {/* CalciteTab: Civil Works */}
         <calcite-tab>
-          {buildingLayerCwLoaded === "loaded" ? <CivilWorkChart /> : ""}
+          {buildingLayerCwLoaded === "loaded" && <CivilWorkChart />}
         </calcite-tab>
       </calcite-tabs>
     </>
