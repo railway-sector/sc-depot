@@ -3,7 +3,7 @@ import { buildingLayer, queryc2 } from "./layers";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import BuildingComponentSublayer from "@arcgis/core/layers/buildingSublayers/BuildingComponentSublayer.js";
-import type { StatusStateType } from "./uniqueValues";
+import { type StatusStateType } from "./uniqueValues";
 import type { StatusTypenamesType } from "./uniqueValues";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
@@ -123,6 +123,7 @@ export function clickSeries(
   chartCategoryTypes: any,
   chartCategoryField: any,
   statusStatename: any,
+  statusArray: any,
   statusField: any,
   arcgisScene: any,
   setSublayerViewFilter: any,
@@ -136,14 +137,9 @@ export function clickSeries(
       (emp: any) => emp.category === categorySelected,
     );
     const typeSelected = find?.value;
-    const selectedStatus: number | null =
-      statusStatename === "comp"
-        ? 4
-        : statusStatename === "ongoing"
-          ? 2
-          : statusStatename === "delayed"
-            ? 3
-            : 1;
+    const selectedStatus = statusArray.find(
+      (item: any) => item.status === statusStatename,
+    ).value;
 
     queryc2.qValues = [q1Value];
     queryc2.qFields = [q1Field];
@@ -184,6 +180,7 @@ export function makeSeries(
   chartCategoryField: any,
   statusTypename: any,
   statusStatename: any,
+  statusArray: any,
   statusField: any,
   xAxis: any,
   yAxis: any,
@@ -254,6 +251,7 @@ export function makeSeries(
     chartCategoryTypes,
     chartCategoryField,
     statusStatename,
+    statusArray,
     statusField,
     arcgisScene,
     setSublayerViewFilter,
@@ -280,6 +278,7 @@ interface chartType {
   // 'statusTypename' and 'statusStatename': E.g., you can add or delete status you wish to add in stacked columns.
   statusTypename: StatusTypenamesType[]; // order has no effect on statistics
   statusStatename: StatusStateType[]; // order affects the order displayed in stacked column charts
+  statusArray: any;
   statusField?: any;
   seriesStatusColor: any;
   strokeColor: any;
@@ -306,6 +305,7 @@ export function chartRenderer({
   q1Field,
   statusTypename,
   statusStatename,
+  statusArray,
   statusField,
   seriesStatusColor,
   strokeColor,
@@ -410,6 +410,7 @@ export function chartRenderer({
         chartCategoryField,
         statustype,
         statusStatename[index],
+        statusArray,
         statusField,
         xAxis,
         yAxis,

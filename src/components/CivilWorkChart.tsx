@@ -12,7 +12,12 @@ import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
 import { thousands_separators } from "../Query";
-import { chart_colors, civilworkTypes, status_field } from "../uniqueValues";
+import {
+  chart_colors,
+  civilworkTypes,
+  status_field,
+  statusArray,
+} from "../uniqueValues";
 import { MyContext } from "../contexts/MyContext";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
@@ -146,6 +151,7 @@ const CivilWorkChart = () => {
       q1Field: undefined,
       statusTypename: ["To be Constructed", "Under Construction", "Completed"], //["Completed", "To be Constructed", "Under Construction"],
       statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
+      statusArray: statusArray,
       statusField: status_field,
       seriesStatusColor: chart_colors,
       strokeColor: chartBorderLineColor,

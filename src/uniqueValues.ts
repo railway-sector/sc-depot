@@ -93,5 +93,14 @@ export const civilworkTypes = civilwork_type_labels.map(
   },
 );
 
+export const statusLabels = ["incomp", "ongoing", "delayed", "comp"];
+export const statusValues = [1, 2, 3, 4];
+export const statusArray = statusLabels.map((status: any, index: any) => {
+  return Object.assign({
+    status: status,
+    value: statusValues[index],
+  });
+});
+
 //--- chart parameters
 export const chart_colors = ["#000000", "#f7f7f7ff", "#FF0000", "#0070ff"];

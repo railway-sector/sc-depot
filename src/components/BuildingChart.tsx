@@ -24,6 +24,7 @@ import {
   buildingTypes,
   chart_colors,
   status_field,
+  statusArray,
 } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import { chartDataStackColumns } from "../ChartDataGenerator";
@@ -174,6 +175,7 @@ const BuildingChart = () => {
       q1Field: building_field,
       statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
       statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
+      statusArray: statusArray,
       statusField: status_field,
       seriesStatusColor: chart_colors,
       strokeColor: chartBorderLineColor,
