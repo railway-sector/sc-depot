@@ -5,6 +5,7 @@ import { img_size, months } from "../uniqueValues";
 
 export default function VideoComponent() {
   const { mediasrcpaths, mediaSelectedscale, mediatimestamp } = use(MyContext);
+
   const [yyyy1, setYyyy1] = useState<string>();
   const [yyyy2, setYyyy2] = useState<string>();
   const [mm1, setMm1] = useState<string>();
@@ -25,7 +26,9 @@ export default function VideoComponent() {
 
   // Reset video when played before:
   useEffect(() => {
+    video2 && video2.load();
     video1 && video1.load();
+
     video1 ? (video1.currentTime = 0) : null;
     video2 ? (video2.currentTime = 0) : null;
   }, [mediasrcpaths]);
