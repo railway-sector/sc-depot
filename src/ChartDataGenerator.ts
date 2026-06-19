@@ -58,17 +58,15 @@ export async function chartDataQuery({
   query.where = qChart;
 
   //--- Query features using statistics definitions
-  const qStats = layers?.queryFeatures(query).then((response: any) => {
-    const stats = response.features[0].attributes;
-    const incomp = stats[compile[0].outStatisticFieldName];
-    const ongoing = stats[compile[1].outStatisticFieldName];
-    const delayed = stats[compile[2].outStatisticFieldName];
-    const comp = stats[compile[3].outStatisticFieldName];
-    const total = incomp + ongoing + delayed + comp;
+  const response = await layers?.queryFeatures(query);
+  const stats = response.features[0].attributes;
+  const incomp = stats[compile[0].outStatisticFieldName];
+  const ongoing = stats[compile[1].outStatisticFieldName];
+  const delayed = stats[compile[2].outStatisticFieldName];
+  const comp = stats[compile[3].outStatisticFieldName];
+  const total = incomp + ongoing + delayed + comp;
 
-    return [incomp, comp, ongoing, delayed, total];
-  });
-  return qStats;
+  return [incomp, comp, ongoing, delayed, total];
 }
 
 export async function chartDataStackColumns({
