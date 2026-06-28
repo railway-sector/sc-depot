@@ -8,16 +8,7 @@ import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
 import { buildingSpotZoom, thousands_separators } from "../Query";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { MyContext } from "../contexts/MyContext";
-import {
-  columnsLayer,
-  floorsLayer,
-  queryc,
-  stColumnLayer,
-  stFoundationLayer,
-  stFramingLayer,
-  sublayersAll,
-  wallsLayer,
-} from "../layers";
+import { queryc, sublayersAll } from "../layers";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import {
   building_field,
@@ -57,33 +48,20 @@ const BuildingChart = () => {
 
   const chartID = "station-bar";
   useEffect(() => {
+    const sublayersArray = sublayersAll.map((item: any) => item.layer);
+
     queryc.qValues = [buildings];
     queryc.qFields = [building_field];
     queryDefinitionExpression({
       queryExpression: queryc.queryExpression(),
-      featureLayer: [
-        stFoundationLayer,
-        stColumnLayer,
-        stFramingLayer,
-        floorsLayer,
-        wallsLayer,
-        columnsLayer,
-      ],
+      featureLayer: sublayersArray,
     });
 
     chartDataStackColumns({
       qChart: queryc.queryExpression(),
       chartCategoryTypes: buildingTypes,
-      chartCategoryField: undefined,
-      chartCategoryValueType: "string", //
-      layers: [
-        stFoundationLayer,
-        stColumnLayer,
-        stFramingLayer,
-        floorsLayer,
-        wallsLayer,
-        columnsLayer,
-      ],
+      chartCategoryTypeField: undefined,
+      layers: sublayersArray,
       statusState: [1, 2, 3, 4],
       statusField: status_field,
     }).then((response: any) => {

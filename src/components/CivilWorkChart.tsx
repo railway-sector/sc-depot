@@ -1,11 +1,6 @@
 import { use, useEffect, useRef, useState } from "react";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
-import {
-  stColumnsLayer_cw,
-  stFoundationLayer_cw,
-  stFramingLayer_cw,
-  sublayersCivilAll,
-} from "../layers";
+import { sublayersCivilAll } from "../layers";
 
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
@@ -51,20 +46,18 @@ const CivilWorkChart = () => {
 
   const chartID_cw = "depot-civil-works";
   useEffect(() => {
+    const sublayersArray = sublayersCivilAll.map((item: any) => item.layer);
+
     queryDefinitionExpression({
       queryExpression: undefined,
-      featureLayer: [
-        stFoundationLayer_cw,
-        stColumnsLayer_cw,
-        stFramingLayer_cw,
-      ],
+      featureLayer: sublayersArray,
     });
 
     chartDataStackColumns({
       qChart: undefined,
       chartCategoryTypes: civilworkTypes,
-      chartCategoryField: undefined,
-      layers: [stFoundationLayer_cw, stColumnsLayer_cw, stFramingLayer_cw],
+      chartCategoryTypeField: undefined,
+      layers: sublayersArray,
       statusState: [1, 2, 3, 4],
       statusField: status_field,
     }).then((response: any) => {
