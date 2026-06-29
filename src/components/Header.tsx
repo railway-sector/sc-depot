@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DropdownData from "./DropdownContext";
-import { dateUpdate } from "../Query";
+import { dateUpdate } from "../query";
 
 function Header() {
   const [asOfDate, setAsOfDate] = useState(null);

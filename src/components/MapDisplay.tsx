@@ -27,8 +27,8 @@ import "@esri/calcite-components/components/calcite-segmented-control-item";
 import "@esri/calcite-components/components/calcite-button";
 import { MyContext } from "../contexts/MyContext";
 import { image_scales } from "../uniqueValues";
-import { mediaQuery } from "../Query";
-import VideoComponent from "./VideoComponent";
+import { updateMediaInfo } from "../query";
+import VideoComponent from "./DroneVideoComponent";
 import DroneImageComponent from "./DroneImageComponent";
 
 function MapDisplay() {
@@ -79,25 +79,19 @@ function MapDisplay() {
           const ID = attributes["id"];
 
           if (layer_title === "Drone Image") {
-            mediaQuery(drone_image_point_layer, ID).then((item) => {
-              if (item.length === 1) {
-                updateMediasrcpaths([item[0].path, ""]);
-                updateMediatimestamp([item[0].timestamp, ""]);
-              } else {
-                updateMediasrcpaths([item[0].path, item[1].path]);
-                updateMediatimestamp([item[0].timestamp, item[1].timestamp]);
-              }
+            updateMediaInfo({
+              mediaLayer: drone_image_point_layer,
+              id: ID,
+              srcpath: updateMediasrcpaths,
+              timestamp: updateMediatimestamp,
             });
           } else if (layer_title === "Drone Video") {
-            updateMediasrcpaths([attributes["Path"], attributes["Path"]]);
-            mediaQuery(drone_video_point_layer, ID).then((item) => {
-              if (item.length === 1) {
-                updateMediasrcpaths([item[0].path, ""]);
-                updateMediatimestamp([item[0].timestamp, ""]);
-              } else {
-                updateMediasrcpaths([item[0].path, item[1].path]);
-                updateMediatimestamp([item[0].timestamp, item[1].timestamp]);
-              }
+            // updateMediasrcpaths([attributes["Path"], attributes["Path"]]);
+            updateMediaInfo({
+              mediaLayer: drone_video_point_layer,
+              id: ID,
+              srcpath: updateMediasrcpaths,
+              timestamp: updateMediatimestamp,
             });
           }
         }

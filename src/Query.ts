@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { dateTable, buildingSpotLayer } from "./layers";
+import { months } from "./uniqueValues";
 
 //---------------------------------//
 //           Media query           //
@@ -7,18 +8,49 @@ import { dateTable, buildingSpotLayer } from "./layers";
 export async function mediaQuery(layer: any, ID: any) {
   const query = layer.createQuery();
   query.where = `id = ${ID}`;
-  const final = layer.queryFeatures(query).then((result: any) => {
-    const stats = result.features;
-    const data = stats.map((item: any) => {
-      return Object.assign({
-        timestamp: Number(item.attributes["TimeStamp"]),
-        path: item.attributes["Path"],
-      });
+
+  const result = await layer.queryFeatures(query);
+  const data = result.features.map((item: any) => {
+    return Object.assign({
+      timestamp: Number(item.attributes["TimeStamp"]),
+      path: item.attributes["Path"],
     });
-    data.sort((a: any, b: any) => a.timestamp - b.timestamp);
-    return data;
   });
-  return final;
+  data.sort((a: any, b: any) => a.timestamp - b.timestamp);
+
+  return data;
+}
+
+interface updateMediaInfoType {
+  mediaLayer: any;
+  id: any;
+  srcpath: any;
+  timestamp: any;
+}
+export async function updateMediaInfo({
+  mediaLayer,
+  id,
+  srcpath,
+  timestamp,
+}: updateMediaInfoType) {
+  const item = await mediaQuery(mediaLayer, id);
+
+  if (item.length === 1) {
+    srcpath([item[0].path, ""]);
+    timestamp([item[0].timestamp, ""]);
+  } else {
+    srcpath([item[0].path, item[1].path]);
+    timestamp([item[0].timestamp, item[1].timestamp]);
+  }
+}
+
+export async function mediaTimestampToDates(timestamp: any) {
+  const yyyy1 = timestamp[0].toString().slice(0, 4);
+  const yyyy2 = timestamp[1].toString().slice(0, 4);
+  const mm1 = months[Number(timestamp[0].toString().slice(4, 6)) - 1];
+  const mm2 = months[Number(timestamp[1].toString().slice(4, 6)) - 1];
+
+  return { yyyy1, yyyy2, mm1, mm2 };
 }
 
 // Updat date

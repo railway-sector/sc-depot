@@ -10,14 +10,38 @@ import ExtrudeSymbol3DLayer from "@arcgis/core/symbols/ExtrudeSymbol3DLayer.js";
 import LabelSymbol3D from "@arcgis/core/symbols/LabelSymbol3D";
 import TextSymbol3DLayer from "@arcgis/core/symbols/TextSymbol3DLayer";
 import SolidEdges3D from "@arcgis/core/symbols/edges/SolidEdges3D";
-import { labelSymbol3DLine } from "./Label";
+import { labelSymbol3DLine } from "./label";
 import BuildingSceneLayer from "@arcgis/core/layers/BuildingSceneLayer";
 import UniqueValueRenderer from "@arcgis/core/renderers/UniqueValueRenderer";
 import CustomContent from "@arcgis/core/popup/content/CustomContent";
 import PopupTemplate from "@arcgis/core/PopupTemplate";
 import GroupLayer from "@arcgis/core/layers/GroupLayer";
 import QueryExpressionLayers from "query-layers-expression";
-import { statusStateValues } from "./uniqueValues";
+import {
+  buildingTypes,
+  civilworkTypes,
+  status_field,
+  statusStateValues,
+} from "./uniqueValues";
+import ChartStackColumns from "chart-stack-column";
+
+export const chartstack_b = new ChartStackColumns(
+  undefined, // qChart
+  buildingTypes, // categoryTypes
+  undefined, // categoryTypeField
+  undefined, // layers
+  status_field, // status field
+  undefined, // statusState
+);
+
+export const chartstack_c = new ChartStackColumns(
+  undefined, // qChart
+  civilworkTypes, // categoryTypes
+  undefined, // categoryTypeField
+  undefined, // layers
+  status_field, // status field
+  undefined, // statusState
+);
 
 export const queryc = new QueryExpressionLayers(
   undefined,

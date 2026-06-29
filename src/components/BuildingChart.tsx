@@ -3,12 +3,10 @@
 import { useEffect, useRef, useState, use } from "react";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
-import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
-import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
-import { buildingSpotZoom, thousands_separators } from "../Query";
+import { buildingSpotZoom, thousands_separators } from "../query";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { MyContext } from "../contexts/MyContext";
-import { queryc, sublayersAll } from "../layers";
+import { chartstack_b, queryc, sublayersAll } from "../layers";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import {
   building_field,
@@ -18,18 +16,10 @@ import {
   statusArray,
 } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
-import { chartDataStackColumns } from "../ChartDataGenerator";
-import { queryDefinitionExpression } from "../QueryExpression";
-import { chartRenderer, resetAllLayers } from "../ChartRenderer";
-
-// Dispose function
-function maybeDisposeRoot(divId: any) {
-  am5.array.each(am5.registry.rootElements, function (root) {
-    if (root.dom.id === divId) {
-      root.dispose();
-    }
-  });
-}
+import { queryDefinitionExpression } from "../queryExpression";
+import { chartRenderer, resetAllLayers } from "../chartRenderer";
+import { useQuery } from "@tanstack/react-query";
+import { legendSetter, rootSetter } from "../chartSetter";
 
 // Draw chart
 const BuildingChart = () => {
@@ -37,41 +27,43 @@ const BuildingChart = () => {
   const { buildings, updateChartPanelwidth, chartPanelwidth } = use(MyContext);
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
-  const [chartData, setChartData] = useState<any>([]);
-  const [totalNumber, setTotalNumber] = useState<number>(0);
-  const [progress, setProgress] = useState<number>(0);
   const [sublayerViewFilter, setSublayerViewFilter] = useState<
     SubLayerView | any
   >();
   const highlightedSublayerView = useRef<any>(undefined);
   const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
-
   const chartID = "station-bar";
-  useEffect(() => {
-    const sublayersArray = sublayersAll.map((item: any) => item.layer);
 
-    queryc.qValues = [buildings];
-    queryc.qFields = [building_field];
-    queryDefinitionExpression({
-      queryExpression: queryc.queryExpression(),
-      featureLayer: sublayersArray,
-    });
+  const { data } = useQuery<any>({
+    queryKey: [building_field, buildings],
+    queryFn: async () => {
+      const sublayersArray = sublayersAll.map((item: any) => item.layer);
 
-    chartDataStackColumns({
-      qChart: queryc.queryExpression(),
-      chartCategoryTypes: buildingTypes,
-      chartCategoryTypeField: undefined,
-      layers: sublayersArray,
-      statusState: [1, 2, 3, 4],
-      statusField: status_field,
-    }).then((response: any) => {
-      setChartData(response[0]);
-      setTotalNumber(response[1]);
-      setProgress(response[2]);
-    });
+      queryc.qValues = [buildings];
+      queryc.qFields = [building_field];
+      queryDefinitionExpression({
+        queryExpression: queryc.queryExpression(),
+        featureLayer: sublayersArray,
+      });
 
-    buildingSpotZoom(buildings, arcgisScene);
-  }, [buildings]);
+      chartstack_b.qChart = queryc.queryExpression();
+      chartstack_b.layers = sublayersArray;
+      chartstack_b.statusState = [1, 2, 3, 4]; // 2, 3 are dummy
+      const chartData = await chartstack_b.chartDataStackColumns();
+
+      buildingSpotZoom(buildings, arcgisScene);
+
+      return {
+        chartData: chartData[0] || [],
+        totaln: chartData[1] || 0,
+        perc: chartData[2] || 0,
+      };
+    },
+    staleTime: Infinity,
+  });
+  const chartData = data?.chartData || [];
+  const totaln = data?.totaln || 0;
+  const perc_comp = data?.perc || 0;
 
   // Define parameters
   const marginTop = 0;
@@ -98,18 +90,7 @@ const BuildingChart = () => {
   const new_imageSize = chartPanelwidth * 0.035;
 
   useEffect(() => {
-    maybeDisposeRoot(chartID);
-
-    const root = am5.Root.new(chartID);
-    root.container.children.clear();
-    root._logo?.dispose();
-
-    // Set themesf
-    // https://www.amcharts.com/docs/v5/concepts/themes/
-    root.setThemes([
-      am5themes_Animated.new(root),
-      am5themes_Responsive.new(root),
-    ]);
+    const root = rootSetter({ chartID: chartID });
 
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
@@ -130,17 +111,17 @@ const BuildingChart = () => {
     );
     chartRef.current = chart;
 
-    const legend = chart.children.push(
-      am5.Legend.new(root, {
-        centerX: am5.p50,
-        centerY: am5.percent(50),
-        x: am5.percent(60),
-        y: am5.percent(97),
-        marginTop: 20,
-        scale: 0.9,
-        layout: root.horizontalLayout,
-      }),
-    );
+    const legend = legendSetter({
+      chart: chart,
+      root: root,
+      centerX: 50,
+      centerY: 50,
+      x: 60,
+      y: 97,
+      marginTop: 20,
+      scale: 0.9,
+      layout: root.horizontalLayout,
+    });
     legendRef.current = legend;
 
     chartRenderer({
@@ -236,7 +217,7 @@ const BuildingChart = () => {
               margin: "auto",
             }}
           >
-            {progress} %
+            {perc_comp} %
           </dd>
           <div
             style={{
@@ -246,7 +227,7 @@ const BuildingChart = () => {
               lineHeight: "1.2",
             }}
           >
-            ({thousands_separators(totalNumber)})
+            ({thousands_separators(totaln)})
           </div>
         </dl>
       </div>
