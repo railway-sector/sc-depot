@@ -9,8 +9,8 @@ import { buildingLayer, buildingLayer_cw } from "../layers";
 
 // import LotChart from "./LotChart";
 import "../index.css";
-import BuildingChart from "./BuildingChart";
-import CivilWorkChart from "./CivilWorkChart";
+import BuildingChart from "./ChartBuilding";
+import CivilWorkChart from "./ChartCivilWork";
 
 function MainChart() {
   const [buildingLayerLoaded, setBuildingLayerLoaded] = useState<any>(); // 'loaded'

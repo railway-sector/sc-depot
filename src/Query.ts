@@ -1,6 +1,47 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
+import type BuildingSceneLayer from "@arcgis/core/layers/BuildingSceneLayer";
 import { dateTable, buildingSpotLayer } from "./layers";
 import { months } from "./uniqueValues";
+import type BuildingComponentSublayer from "@arcgis/core/layers/buildingSublayers/BuildingComponentSublayer";
+import type SceneLayer from "@arcgis/core/layers/SceneLayer";
+import type FeatureLayer from "@arcgis/core/layers/FeatureLayer";
+
+//---------------------------------//
+//           Reset layer           //
+//---------------------------------//
+interface layersRevitVisibilityType {
+  layers:
+    | [
+        BuildingComponentSublayer?,
+        BuildingComponentSublayer?,
+        BuildingComponentSublayer?,
+        BuildingComponentSublayer?,
+        BuildingComponentSublayer?,
+        BuildingComponentSublayer?,
+        BuildingSceneLayer?,
+        SceneLayer?,
+        FeatureLayer?,
+      ]
+    | any;
+  qExpression?: any;
+}
+
+export const resetAllLayers = ({
+  layers,
+  qExpression,
+}: layersRevitVisibilityType) => {
+  layers.map((layer: any) => {
+    if (layer) {
+      if (qExpression) {
+        layer.layer.definitionExpression = qExpression;
+        layer.layer.visible = true;
+      } else {
+        layer.layer.definitionExpression = "1=1";
+        layer.layer.visible = true;
+      }
+    }
+  });
+};
 
 //---------------------------------//
 //           Media query           //

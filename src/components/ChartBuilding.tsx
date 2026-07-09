@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState, use } from "react";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
-import { buildingSpotZoom, thousands_separators } from "../query";
+import {
+  buildingSpotZoom,
+  thousands_separators,
+  resetAllLayers,
+} from "../query";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { MyContext } from "../contexts/MyContext";
 import { chartstack_b, queryc, sublayersAll } from "../layers";
@@ -17,12 +21,12 @@ import {
 } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import { queryDefinitionExpression } from "../queryExpression";
-import { chartRenderer, resetAllLayers } from "../chartRenderer";
+import { chartRenderer } from "../chartRenderer";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
 
 // Draw chart
-const BuildingChart = () => {
+const ChartBuilding = () => {
   const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
   const { buildings, updateChartPanelwidth, chartPanelwidth } = use(MyContext);
   const legendRef = useRef<unknown | any | undefined>({});
@@ -59,7 +63,9 @@ const BuildingChart = () => {
         perc: chartData[2] || 0,
       };
     },
-    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
   const chartData = data?.chartData || [];
   const totaln = data?.totaln || 0;
@@ -78,7 +84,7 @@ const BuildingChart = () => {
   // const chartSeriesFillColorOngoing = "#d3d3d3"; // orfiginal: #FF0000
   const chartBorderLineColor = "#00c5ff";
   const chartBorderLineWidth = 0.4;
-  const chartPaddingRightIconLabelSpace = 10;
+  const chartPaddingRightIconLabel = 10;
 
   //-------------------------------------//
   //    Responsive Chart parameters      //
@@ -143,7 +149,7 @@ const BuildingChart = () => {
       setSublayerViewFilter: setSublayerViewFilter,
       sublayersCollection: sublayersAll,
       highlightedSublayerView: highlightedSublayerView,
-      chartPaddingRightIconLabelSpace: chartPaddingRightIconLabelSpace,
+      chartPaddingRightIconLabelSpace: chartPaddingRightIconLabel,
       new_chartIconSize: new_chartIconSize,
       new_axisFontSize: new_axisFontSize,
       legend: legend,
@@ -163,9 +169,6 @@ const BuildingChart = () => {
       sublayerViewFilter.filter = new FeatureFilter({
         where: undefined,
       });
-
-      highlightedSublayerView.current &&
-        highlightedSublayerView.current.remove();
     }
 
     resetAllLayers({
@@ -265,4 +268,4 @@ const BuildingChart = () => {
   );
 };
 
-export default BuildingChart;
+export default ChartBuilding;

@@ -4,7 +4,7 @@ import { chartstack_c, sublayersCivilAll } from "../layers";
 
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
-import { thousands_separators } from "../query";
+import { thousands_separators, resetAllLayers } from "../query";
 import {
   chart_colors,
   civilworkTypes,
@@ -15,12 +15,12 @@ import { MyContext } from "../contexts/MyContext";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import { queryDefinitionExpression } from "../queryExpression";
-import { chartRenderer, resetAllLayers } from "../chartRenderer";
+import { chartRenderer } from "../chartRenderer";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
 
 // Draw chart
-const CivilWorkChart = () => {
+const ChartCivilWork = () => {
   const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
   const { updateChartPanelwidth, chartPanelwidth } = use(MyContext);
   const legendRef = useRef<unknown | any | undefined>({});
@@ -253,4 +253,4 @@ const CivilWorkChart = () => {
   );
 };
 
-export default CivilWorkChart;
+export default ChartCivilWork;

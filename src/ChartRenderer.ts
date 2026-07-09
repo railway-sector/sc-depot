@@ -1,14 +1,9 @@
 import { buildingLayer, queryc2 } from "./layers";
-
-import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
-import BuildingComponentSublayer from "@arcgis/core/layers/buildingSublayers/BuildingComponentSublayer.js";
 import { type StatusStateType } from "./uniqueValues";
 import type { StatusTypenamesType } from "./uniqueValues";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
-import type BuildingSceneLayer from "@arcgis/core/layers/BuildingSceneLayer";
-import type SceneLayer from "@arcgis/core/layers/SceneLayer";
 //--------------------------------//
 //    Chart Renderer parameters   //
 //--------------------------------//
@@ -426,37 +421,3 @@ export function chartRenderer({
       );
     });
 }
-
-interface layersRevitVisibilityType {
-  layers:
-    | [
-        BuildingComponentSublayer?,
-        BuildingComponentSublayer?,
-        BuildingComponentSublayer?,
-        BuildingComponentSublayer?,
-        BuildingComponentSublayer?,
-        BuildingComponentSublayer?,
-        BuildingSceneLayer?,
-        SceneLayer?,
-        FeatureLayer?,
-      ]
-    | any;
-  qExpression?: any;
-}
-
-export const resetAllLayers = ({
-  layers,
-  qExpression,
-}: layersRevitVisibilityType) => {
-  layers.map((layer: any) => {
-    if (layer) {
-      if (qExpression) {
-        layer.layer.definitionExpression = qExpression;
-        layer.layer.visible = true;
-      } else {
-        layer.layer.definitionExpression = "1=1";
-        layer.layer.visible = true;
-      }
-    }
-  });
-};
