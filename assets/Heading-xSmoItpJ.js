@@ -1,1 +1,0 @@
-import{eg as l,eh as s,ei as o,ej as c}from"./index-GMnK-A2g.js";function h({level:e,class:n,...i},t){const r=a(e);return l(`h${r}`,{...i,"aria-level":String(r),class:s(o.heading,n),role:"heading"},t)}function a(e){return c(Math.ceil(e),1,6)}function f(e,n=1){return a(e+n)}export{h as i,f as l};
