@@ -43,6 +43,7 @@ function MapDisplay() {
     updateMediatimestamp,
   } = use(MyContext);
   const arcgisScene = document.querySelector("arcgis-scene");
+  const [_mapView, setMapView] = useState<any>();
 
   arcgisScene?.viewOnReady(() => {
     arcgisScene?.map?.add(buildingSpotLayer);
@@ -113,6 +114,9 @@ function MapDisplay() {
       viewingMode="local"
       zoom={18}
       center="121.1609162, 14.2253630"
+      onarcgisViewReadyChange={(event: any) => {
+        setMapView(event.target);
+      }}
     >
       {/* ---------- Media Container ---------- */}
       <div

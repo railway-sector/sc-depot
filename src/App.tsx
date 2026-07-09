@@ -31,7 +31,6 @@ export function App(): React.JSX.Element {
     image_scales[0],
   );
   const [mediatimestamp, setMediatimestamp] = useState<any>();
-  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
 
   const updateBuildings = (newBuilding: any) => {
     setBuildings(newBuilding);
@@ -57,10 +56,6 @@ export function App(): React.JSX.Element {
     setMediatimestamp(NewTime);
   };
 
-  const updateChartPanelwidth = (newWidth: any) => {
-    setChartPanelwidth(newWidth);
-  };
-
   return (
     <>
       {loggedInState === true ? (
@@ -75,14 +70,12 @@ export function App(): React.JSX.Element {
                 mediatype,
                 mediasrcpaths,
                 mediaSelectedscale,
-                chartPanelwidth,
                 mediatimestamp,
                 updateBuildings,
                 updateImageOpen,
                 updateMediatype,
                 updateMediasrcpaths,
                 updateMediaSelectedscale,
-                updateChartPanelwidth,
                 updateMediatimestamp,
               }}
             >

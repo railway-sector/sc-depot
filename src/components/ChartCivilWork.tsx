@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { chartstack_c, sublayersCivilAll } from "../layers";
 
@@ -11,7 +11,6 @@ import {
   status_field,
   statusArray,
 } from "../uniqueValues";
-import { MyContext } from "../contexts/MyContext";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import { queryDefinitionExpression } from "../queryExpression";
@@ -22,7 +21,7 @@ import { legendSetter, rootSetter } from "../chartSetter";
 // Draw chart
 const ChartCivilWork = () => {
   const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
-  const { updateChartPanelwidth, chartPanelwidth } = use(MyContext);
+  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
   const [sublayerViewFilter, setSublayerViewFilter] = useState<
@@ -139,7 +138,7 @@ const ChartCivilWork = () => {
       new_chartIconSize: new_chartIconSize,
       new_axisFontSize: new_axisFontSize,
       legend: legend,
-      updateChartPanelwidth: updateChartPanelwidth,
+      updateChartPanelwidth: setChartPanelwidth,
     });
     chart.appear(1000, 100);
 

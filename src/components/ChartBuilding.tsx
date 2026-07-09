@@ -28,7 +28,8 @@ import { legendSetter, rootSetter } from "../chartSetter";
 // Draw chart
 const ChartBuilding = () => {
   const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
-  const { buildings, updateChartPanelwidth, chartPanelwidth } = use(MyContext);
+  const { buildings } = use(MyContext);
+  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
   const [sublayerViewFilter, setSublayerViewFilter] = useState<
@@ -153,7 +154,7 @@ const ChartBuilding = () => {
       new_chartIconSize: new_chartIconSize,
       new_axisFontSize: new_axisFontSize,
       legend: legend,
-      updateChartPanelwidth: updateChartPanelwidth,
+      updateChartPanelwidth: setChartPanelwidth,
     });
 
     chart.appear(1000, 100);
