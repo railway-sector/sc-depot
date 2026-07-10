@@ -30,6 +30,7 @@ export const resetAllLayers = ({
   layers,
   qExpression,
 }: layersRevitVisibilityType) => {
+  if (!layers) return;
   layers.map((layer: any) => {
     if (layer) {
       if (qExpression) {

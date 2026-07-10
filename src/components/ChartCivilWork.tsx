@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
-import { chartstack_c, sublayersCivilAll } from "../layers";
+import {
+  buildingLayer_cw,
+  chartstack_c,
+  queryc2,
+  sublayersCivilAll,
+} from "../layers";
 
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
@@ -14,9 +19,9 @@ import {
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import { queryDefinitionExpression } from "../queryExpression";
-import { chartRenderer } from "../chartRenderer";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
+import ChartStackColumnRender, { resetQuerc } from "chart-stack-column-render";
 
 // Draw chart
 const ChartCivilWork = () => {
@@ -27,14 +32,16 @@ const ChartCivilWork = () => {
   const [sublayerViewFilter, setSublayerViewFilter] = useState<
     SubLayerView | any
   >();
-  const highlightedSublayerView = useRef<any>(undefined);
   const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
   const chartID = "depot-civil-works";
+
+  const sublayersArray = sublayersCivilAll.map((item: any) => item.layer);
 
   const { data } = useQuery<any>({
     queryKey: [],
     queryFn: async () => {
-      const sublayersArray = sublayersCivilAll.map((item: any) => item.layer);
+      //--- Reset
+      resetQuerc(queryc2);
 
       queryDefinitionExpression({
         queryExpression: undefined,
@@ -69,7 +76,7 @@ const ChartCivilWork = () => {
   // const chartSeriesFillColorOngoing = "#d3d3d3"; // orfiginal: #FF0000
   const chartBorderLineColor = "#00c5ff";
   const chartBorderLineWidth = 0.4;
-  const chartPaddingRightIconLabelSpace = 10;
+  const chartPaddingRightIconLabel = 10;
 
   //-------------------------------------//
   //    Responsive Chart parameters      //
@@ -115,31 +122,33 @@ const ChartCivilWork = () => {
     });
     legendRef.current = legend;
 
-    chartRenderer({
-      root: root,
-      chart: chart,
-      data: chartData,
-      chartCategoryTypes: civilworkTypes,
-      chartCategoryField: undefined,
-      q1Value: undefined,
-      q1Field: undefined,
-      statusTypename: ["To be Constructed", "Under Construction", "Completed"], //["Completed", "To be Constructed", "Under Construction"],
-      statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
-      statusArray: statusArray,
-      statusField: status_field,
-      seriesStatusColor: chart_colors,
-      strokeColor: chartBorderLineColor,
-      strokeWidth: chartBorderLineWidth,
-      arcgisScene: arcgisScene,
-      setSublayerViewFilter: setSublayerViewFilter,
-      sublayersCollection: sublayersCivilAll,
-      highlightedSublayerView: highlightedSublayerView,
-      chartPaddingRightIconLabelSpace: chartPaddingRightIconLabelSpace,
-      new_chartIconSize: new_chartIconSize,
-      new_axisFontSize: new_axisFontSize,
-      legend: legend,
-      updateChartPanelwidth: setChartPanelwidth,
-    });
+    const crender = new ChartStackColumnRender(
+      true,
+      sublayersCivilAll,
+      root,
+      chart,
+      chartData,
+      buildingLayer_cw,
+      queryc2,
+      civilworkTypes,
+      undefined,
+      ["Completed", "To be Constructed", "Under Construction"],
+      ["comp", "incomp", "ongoing"],
+      statusArray,
+      status_field,
+      chart_colors,
+      chartBorderLineColor,
+      chartBorderLineWidth,
+      arcgisScene?.view,
+      setSublayerViewFilter,
+      new_chartIconSize,
+      new_axisFontSize,
+      undefined,
+      chartPaddingRightIconLabel,
+      legend,
+      setChartPanelwidth,
+    );
+    crender.chartRendererColumn();
     chart.appear(1000, 100);
 
     return () => {
@@ -153,13 +162,11 @@ const ChartCivilWork = () => {
       sublayerViewFilter.filter = new FeatureFilter({
         where: undefined,
       });
-
-      highlightedSublayerView.current &&
-        highlightedSublayerView.current.remove();
     }
 
     resetAllLayers({
       layers: sublayersCivilAll,
+      qExpression: undefined,
     });
   }, [resetButtonClicked]);
 

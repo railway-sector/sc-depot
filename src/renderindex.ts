@@ -223,7 +223,6 @@ export function makeSeriesColumn({
   revit,
   buildingLayer,
   setSublayerViewFilter,
-  highlightedSublayerView,
 }: makeSeriesColumnType & BuildingSublayerView) {
   const series = chart.series.push(
     am5xy.ColumnSeries.new(root, {
@@ -292,7 +291,6 @@ export function makeSeriesColumn({
     revit,
     buildingLayer,
     setSublayerViewFilter,
-    highlightedSublayerView,
   });
 
   legend.data.push(series);
@@ -312,7 +310,6 @@ export function clickSeriesColumn({
   revit,
   buildingLayer,
   setSublayerViewFilter,
-  highlightedSublayerView,
 }: clickSeriesColumnType & BuildingSublayerView) {
   series.columns.template.events.on("click", (ev: any) => {
     const selected: any = ev.target.dataItem?.dataContext;
@@ -345,7 +342,6 @@ export function clickSeriesColumn({
         sublayerNames: selectedSublayerName,
         view,
         setLayerViewFilter: setSublayerViewFilter,
-        highlightedSublayerView: highlightedSublayerView,
       });
     } else {
       //--- Scene Layer or Feature Layer
@@ -413,7 +409,6 @@ interface BuildingSublayerView extends layerViewQueryProps {
   categorySelected?: any;
   sublayerNames?: any;
   setLayerViewFilter?: any;
-  highlightedSublayerView?: any;
   setSublayerViewFilter?: any;
 }
 
@@ -427,6 +422,9 @@ export const sublayersQuery = ({
     (item: any) => item.value === categorySelected,
   )?.modelName;
 
+  console.log(modelNameSelected);
+  console.log(qChart.queryExpression());
+  // if (!qChart) return;
   const qe = qChart.queryExpression();
 
   if (!modelNameSelected) {
@@ -456,7 +454,6 @@ export const highlightFilterBuildingSublayerView = async ({
   sublayerNames,
   view,
   setLayerViewFilter, // useState
-  highlightedSublayerView,
 }: BuildingSublayerView) => {
   const layerView = await view?.whenLayerView(layer);
 
@@ -467,10 +464,9 @@ export const highlightFilterBuildingSublayerView = async ({
 
   //--- (Optional) Query sublayerView to higlight
   try {
-    const query = sublayerView.createQuery();
-    const result = await sublayerView?.queryObjectIds(query);
+    // const query = sublayerView.createQuery();
+    // const result = await sublayerView?.queryObjectIds(query);
 
-    highlightedSublayerView.current = sublayerView.highlight(result);
     sublayerView.filter = new FeatureFilter({
       where: qChart.queryExpression(),
     });
@@ -487,14 +483,6 @@ export const highlightFilterBuildingSublayerView = async ({
     categorySelected,
     qChart,
   });
-
-  //--- Reset sublayerView
-  if (sublayerView) {
-    highlightedSublayerView.current && highlightedSublayerView.current.remove();
-    sublayerView.filter = new FeatureFilter({
-      where: undefined,
-    });
-  }
 };
 
 //--------------------------------//
@@ -525,7 +513,6 @@ class ChartStackColumnRender implements chartColumnType, BuildingSublayerView {
   chartPaddingRightIconLabel: any;
   legend: any;
   updateChartPanelwidth: any;
-  highlightedSublayerView?: any;
 
   constructor(
     revit: boolean,
@@ -552,7 +539,6 @@ class ChartStackColumnRender implements chartColumnType, BuildingSublayerView {
     chartPaddingRightIconLabel: any,
     legend: any,
     updateChartPanelwidth: any,
-    highlightedSublayerView: any,
   ) {
     this.revit = revit;
     this.layers = layers;
@@ -578,7 +564,6 @@ class ChartStackColumnRender implements chartColumnType, BuildingSublayerView {
     this.chartPaddingRightIconLabel = chartPaddingRightIconLabel;
     this.legend = legend;
     this.updateChartPanelwidth = updateChartPanelwidth;
-    this.highlightedSublayerView = highlightedSublayerView;
   }
 
   chartRendererColumn = async (): Promise<any> => {
@@ -625,7 +610,6 @@ class ChartStackColumnRender implements chartColumnType, BuildingSublayerView {
           revit: this.revit,
           buildingLayer: this.buildingLayer,
           setSublayerViewFilter: this.setLayerViewFilter,
-          highlightedSublayerView: this.highlightedSublayerView,
         });
       });
   };

@@ -10,7 +10,7 @@ import {
 } from "../query";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { MyContext } from "../contexts/MyContext";
-import { chartstack_b, queryc, sublayersAll } from "../layers";
+import { buildingLayer, chartstack_b, queryc, sublayersAll } from "../layers";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import {
   building_field,
@@ -21,9 +21,9 @@ import {
 } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import { queryDefinitionExpression } from "../queryExpression";
-import { chartRenderer } from "../chartRenderer";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
+import ChartStackColumnRender, { resetQuerc } from "chart-stack-column-render";
 
 // Draw chart
 const ChartBuilding = () => {
@@ -33,16 +33,18 @@ const ChartBuilding = () => {
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
   const [sublayerViewFilter, setSublayerViewFilter] = useState<
-    SubLayerView | any
+    SubLayerView | any | undefined
   >();
-  const highlightedSublayerView = useRef<any>(undefined);
   const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
   const chartID = "station-bar";
+
+  const sublayersArray = sublayersAll.map((item: any) => item.layer);
 
   const { data } = useQuery<any>({
     queryKey: [building_field, buildings],
     queryFn: async () => {
-      const sublayersArray = sublayersAll.map((item: any) => item.layer);
+      //--- Reset queryc
+      resetQuerc(queryc);
 
       queryc.qValues = [buildings];
       queryc.qFields = [building_field];
@@ -131,31 +133,33 @@ const ChartBuilding = () => {
     });
     legendRef.current = legend;
 
-    chartRenderer({
-      root: root,
-      chart: chart,
-      data: chartData,
-      chartCategoryTypes: buildingTypes,
-      chartCategoryField: undefined,
-      q1Value: buildings,
-      q1Field: building_field,
-      statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
-      statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
-      statusArray: statusArray,
-      statusField: status_field,
-      seriesStatusColor: chart_colors,
-      strokeColor: chartBorderLineColor,
-      strokeWidth: chartBorderLineWidth,
-      arcgisScene: arcgisScene,
-      setSublayerViewFilter: setSublayerViewFilter,
-      sublayersCollection: sublayersAll,
-      highlightedSublayerView: highlightedSublayerView,
-      chartPaddingRightIconLabelSpace: chartPaddingRightIconLabel,
-      new_chartIconSize: new_chartIconSize,
-      new_axisFontSize: new_axisFontSize,
-      legend: legend,
-      updateChartPanelwidth: setChartPanelwidth,
-    });
+    const crender = new ChartStackColumnRender(
+      true,
+      sublayersAll,
+      root,
+      chart,
+      chartData,
+      buildingLayer,
+      queryc,
+      buildingTypes,
+      undefined,
+      ["Completed", "To be Constructed", "Under Construction"],
+      ["comp", "incomp", "ongoing"],
+      statusArray,
+      status_field,
+      chart_colors,
+      chartBorderLineColor,
+      chartBorderLineWidth,
+      arcgisScene?.view,
+      setSublayerViewFilter,
+      new_chartIconSize,
+      new_axisFontSize,
+      undefined,
+      chartPaddingRightIconLabel,
+      legend,
+      setChartPanelwidth,
+    );
+    crender.chartRendererColumn();
 
     chart.appear(1000, 100);
 
@@ -172,13 +176,14 @@ const ChartBuilding = () => {
       });
     }
 
+    //--- Reset sublayers
     resetAllLayers({
       layers: sublayersAll,
       qExpression: !buildings
         ? undefined
         : `${building_field} = '${buildings}'`,
     });
-  }, [resetButtonClicked]);
+  }, [resetButtonClicked, buildings]);
 
   const primaryLabelColor = "#9ca3af";
   const valueLabelColor = "#d1d5db";
