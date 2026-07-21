@@ -254,9 +254,7 @@ const ChartCivilWork = memo(() => {
         <calcite-button
           iconEnd="reset"
           scale="s"
-          onClick={() =>
-            setResetButtonClicked(resetButtonClicked === false ? true : false)
-          }
+          onClick={() => setResetButtonClicked(!resetButtonClicked)}
         >
           Reset Chart Filter
         </calcite-button>
