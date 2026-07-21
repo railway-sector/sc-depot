@@ -21,7 +21,6 @@ function UndergroundSwitch() {
           position: "fixed",
           zIndex: 10,
           bottom: 0,
-          // left: 0,
           color: "white",
           borderStyle: "solid",
           borderColor: "grey",

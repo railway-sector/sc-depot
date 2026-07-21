@@ -3,7 +3,6 @@ import Select from "react-select";
 import "../index.css";
 import { MyContext } from "../contexts/MyContext";
 import { buildingSpotLayer } from "../layers";
-// import GenerateDropdownData from "npm-dropdown-package";
 import GenerateDropdownData from "dropdown-pkg-arcgis";
 import { useQuery } from "@tanstack/react-query";
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./index.css";
 import "@arcgis/map-components/dist/components/arcgis-map";
 import "@arcgis/map-components/components/arcgis-map";
@@ -24,37 +24,35 @@ export function App(): React.JSX.Element {
   }, []);
 
   const [buildings, setBuildings] = useState<any>();
-  const [imageopen, setImageOpen] = useState<boolean>(false);
+  const [mediaopen, setMediaopen] = useState<boolean>(false);
   const [mediatype, setMediatype] = useState<string>();
-  const [mediasrcpaths, setMediasrcpaths] = useState<string>();
-  const [mediaSelectedscale, setMediaSelectedscale] = useState<any>(
-    image_scales[0],
-  );
+  const [mediapaths, setMediapaths] = useState<string>();
+  const [mediascale, setMediascale] = useState<any>(image_scales[0]);
   const [mediatimestamp, setMediatimestamp] = useState<any>();
 
-  const updateBuildings = (newBuilding: any) => {
+  const updateBuildings = useCallback((newBuilding: any) => {
     setBuildings(newBuilding);
-  };
+  }, []);
 
-  const updateImageOpen = (newImageOpen: any) => {
-    setImageOpen(newImageOpen);
-  };
+  const updateMediaopen = useCallback((newImageOpen: any) => {
+    setMediaopen(newImageOpen);
+  }, []);
 
-  const updateMediatype = (newMedia: any) => {
+  const updateMediatype = useCallback((newMedia: any) => {
     setMediatype(newMedia);
-  };
+  }, []);
 
-  const updateMediasrcpaths = (newSrc: any) => {
-    setMediasrcpaths(newSrc);
-  };
+  const updateMediapaths = useCallback((newSrc: any) => {
+    setMediapaths(newSrc);
+  }, []);
 
-  const updateMediaSelectedscale = (newScale: any) => {
-    setMediaSelectedscale(newScale);
-  };
+  const updateMediascale = useCallback((newScale: any) => {
+    setMediascale(newScale);
+  }, []);
 
-  const updateMediatimestamp = (NewTime: any) => {
+  const updateMediatimestamp = useCallback((NewTime: any) => {
     setMediatimestamp(NewTime);
-  };
+  }, []);
 
   return (
     <>
@@ -66,16 +64,16 @@ export function App(): React.JSX.Element {
             <MyContext
               value={{
                 buildings,
-                imageopen,
+                mediaopen,
                 mediatype,
-                mediasrcpaths,
-                mediaSelectedscale,
+                mediapaths,
+                mediascale,
                 mediatimestamp,
                 updateBuildings,
-                updateImageOpen,
+                updateMediaopen,
                 updateMediatype,
-                updateMediasrcpaths,
-                updateMediaSelectedscale,
+                updateMediapaths,
+                updateMediascale,
                 updateMediatimestamp,
               }}
             >

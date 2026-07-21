@@ -1,32 +1,30 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
-import {
-  buildingLayer_cw,
-  chartstack_c,
-  queryc2,
-  sublayersCivilAll,
-} from "../layers";
+import { buildingLayer_cw, sublayersCivilAll } from "../layers";
 
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
-import { thousands_separators, resetAllLayers } from "../query";
 import {
-  chart_colors,
-  civilworkTypes,
-  status_field,
-  statusArray,
-} from "../uniqueValues";
+  thousands_separators,
+  resetAllLayers,
+  stackColumnChartRender,
+  makeQuery,
+  stackColumnChartData,
+} from "../query";
+import { civil_types_q, status_f, status_q } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import { queryDefinitionExpression } from "../queryExpression";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
-import ChartStackColumnRender, { resetQuerc } from "chart-stack-column-render";
+import ChartStackColumnRender from "chart-stack-column-render";
+import ChartStackColumns from "chart-stack-column";
 
 // Draw chart
-const ChartCivilWork = () => {
+const ChartCivilWork = memo(() => {
   const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
   const [chartPanelwidth, setChartPanelwidth] = useState<any>();
+
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
   const [sublayerViewFilter, setSublayerViewFilter] = useState<
@@ -35,22 +33,28 @@ const ChartCivilWork = () => {
   const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
   const chartID = "depot-civil-works";
 
+  //--- Common qValues and qFields for QueryExpressionLayers class
+  const queryc2 = makeQuery([undefined], [undefined]);
+
   const sublayersArray = sublayersCivilAll.map((item: any) => item.layer);
 
   const { data } = useQuery<any>({
-    queryKey: [],
+    queryKey: ["civilWorkChartData", chartID],
     queryFn: async () => {
-      //--- Reset
-      resetQuerc(queryc2);
-
       queryDefinitionExpression({
-        queryExpression: undefined,
+        queryExpression: queryc2,
         featureLayer: sublayersArray,
       });
 
-      chartstack_c.layers = sublayersArray;
-      chartstack_c.statusState = [1, 2, 3, 4]; // 2, 3 are dummy
-      const chartData = await chartstack_c.chartDataStackColumns();
+      const chartData = await stackColumnChartData({
+        colchart: new ChartStackColumns(),
+        qChart: queryc2,
+        categoryTypes: civil_types_q,
+        categoryTypeField: undefined,
+        layers: sublayersArray,
+        statusField: status_f,
+        statusState: [1, 2, 3, 4],
+      });
 
       return {
         chartData: chartData[0] || [],
@@ -122,39 +126,41 @@ const ChartCivilWork = () => {
     });
     legendRef.current = legend;
 
-    const crender = new ChartStackColumnRender(
-      true,
-      sublayersCivilAll,
+    const chartIconPositionX = 0;
+    //-- Chart render
+    stackColumnChartRender({
+      render: new ChartStackColumnRender(),
+      revit: true,
+      layers: sublayersCivilAll,
       root,
       chart,
-      chartData,
-      buildingLayer_cw,
-      queryc2,
-      civilworkTypes,
-      undefined,
-      ["Completed", "To be Constructed", "Under Construction"],
-      ["comp", "incomp", "ongoing"],
-      statusArray,
-      status_field,
-      chart_colors,
-      chartBorderLineColor,
-      chartBorderLineWidth,
-      arcgisScene?.view,
-      setSublayerViewFilter,
+      data: chartData,
+      buildingLayer: buildingLayer_cw,
+      qChart: queryc2,
+      chartCategoryTypes: civil_types_q,
+      chartCategoryTypeField: undefined,
+      statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
+      statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
+      statusArray: status_q,
+      statusField: status_f,
+      seriesStatusColor: status_q.map((c: any) => c.color),
+      strokeColor: chartBorderLineColor,
+      strokeWidth: chartBorderLineWidth,
+      view: arcgisScene?.view,
+      setLayerViewFilter: setSublayerViewFilter,
       new_chartIconSize,
       new_axisFontSize,
-      undefined,
+      chartIconPositionX,
       chartPaddingRightIconLabel,
       legend,
-      setChartPanelwidth,
-    );
-    crender.chartRendererColumn();
+      updateChartPanelwidth: setChartPanelwidth,
+    });
     chart.appear(1000, 100);
 
     return () => {
       root.dispose();
     };
-  });
+  }, [chartData]);
 
   //-- Reset clicked event in chart series
   useEffect(() => {
@@ -257,6 +263,6 @@ const ChartCivilWork = () => {
       </div>
     </>
   );
-};
+});
 
 export default ChartCivilWork;

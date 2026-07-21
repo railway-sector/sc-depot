@@ -2,31 +2,31 @@ import { createContext } from "react";
 
 type MyDropdownContextType = {
   buildings: any;
-  imageopen: any;
+  mediaopen: any;
   mediatype: any;
-  mediasrcpaths: any;
-  mediaSelectedscale: any;
+  mediapaths: any;
+  mediascale: any;
   mediatimestamp: any;
   updateBuildings: any;
-  updateImageOpen: any;
+  updateMediaopen: any;
   updateMediatype: any;
-  updateMediasrcpaths: any;
-  updateMediaSelectedscale: any;
+  updateMediapaths: any;
+  updateMediascale: any;
   updateMediatimestamp: any;
 };
 
 const initialState = {
   buildings: undefined,
   updateBuildings: undefined,
-  imageopen: undefined,
+  mediaopen: undefined,
   mediatype: undefined,
-  mediasrcpaths: undefined,
-  mediaSelectedscale: undefined,
+  mediapaths: undefined,
+  mediascale: undefined,
   mediatimestamp: undefined,
-  updateImageOpen: undefined,
+  updateMediaopen: undefined,
   updateMediatype: undefined,
-  updateMediasrcpaths: undefined,
-  updateMediaSelectedscale: undefined,
+  updateMediapaths: undefined,
+  updateMediascale: undefined,
   updateMediatimestamp: undefined,
 };
 

@@ -32,13 +32,9 @@ function MainChart() {
   }, []);
 
   useEffect(() => {
-    if (chartTabName === "depotBuilding") {
-      buildingLayer.visible = true;
-      buildingLayer_cw.visible = false;
-    } else if (chartTabName === "civilWorks") {
-      buildingLayer.visible = false;
-      buildingLayer_cw.visible = true;
-    }
+    const isDepot = chartTabName === "depotBuilding";
+    buildingLayer.visible = isDepot;
+    buildingLayer_cw.visible = !isDepot;
   }, [chartTabName]);
 
   return (
@@ -79,7 +75,8 @@ function MainChart() {
 
         {/* CalciteTab: Civil Works */}
         <calcite-tab>
-          {buildingLayerCwLoaded === "loaded" && <CivilWorkChart />}
+          {buildingLayerCwLoaded === "loaded" &&
+            chartTabName === "civilWorks" && <CivilWorkChart />}
         </calcite-tab>
       </calcite-tabs>
     </>

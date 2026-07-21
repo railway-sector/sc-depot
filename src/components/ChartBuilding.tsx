@@ -4,59 +4,71 @@ import { useEffect, useRef, useState, use } from "react";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import {
-  buildingSpotZoom,
   thousands_separators,
   resetAllLayers,
+  makeQuery,
+  stackColumnChartData,
+  stackColumnChartRender,
+  buildingSpotZoom,
 } from "../query";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { MyContext } from "../contexts/MyContext";
-import { buildingLayer, chartstack_b, queryc, sublayersAll } from "../layers";
+import { buildingLayer, sublayersAll } from "../layers";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import {
-  building_field,
-  buildingTypes,
-  chart_colors,
-  status_field,
-  statusArray,
+  building_f,
+  building_types_q,
+  status_f,
+  status_q,
 } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import { queryDefinitionExpression } from "../queryExpression";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
 import ChartStackColumnRender, { resetQuerc } from "chart-stack-column-render";
+import ChartStackColumns from "chart-stack-column";
 
 // Draw chart
 const ChartBuilding = () => {
-  const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
   const { buildings } = use(MyContext);
+  const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
+
   const [chartPanelwidth, setChartPanelwidth] = useState<any>();
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
+  const chartID = "station-bar";
+
   const [sublayerViewFilter, setSublayerViewFilter] = useState<
     SubLayerView | any | undefined
   >();
   const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
-  const chartID = "station-bar";
+
+  //--- Common qValues and qFields for QueryExpressionLayers class
+  const queryc = makeQuery([buildings], [building_f]);
 
   const sublayersArray = sublayersAll.map((item: any) => item.layer);
 
   const { data } = useQuery<any>({
-    queryKey: [building_field, buildings],
+    queryKey: [building_f, buildings],
     queryFn: async () => {
       //--- Reset queryc
       resetQuerc(queryc);
 
-      queryc.qValues = [buildings];
-      queryc.qFields = [building_field];
+      //--- Filter
       queryDefinitionExpression({
         queryExpression: queryc.queryExpression(),
         featureLayer: sublayersArray,
       });
 
-      chartstack_b.qChart = queryc.queryExpression();
-      chartstack_b.layers = sublayersArray;
-      chartstack_b.statusState = [1, 2, 3, 4]; // 2, 3 are dummy
-      const chartData = await chartstack_b.chartDataStackColumns();
+      const chartData = await stackColumnChartData({
+        colchart: new ChartStackColumns(),
+        qChart: queryc,
+        categoryTypes: building_types_q,
+        categoryTypeField: undefined,
+        layers: sublayersArray,
+        statusField: status_f,
+        statusState: [1, 2, 3, 4],
+      });
 
       buildingSpotZoom(buildings, arcgisScene);
 
@@ -133,40 +145,42 @@ const ChartBuilding = () => {
     });
     legendRef.current = legend;
 
-    const crender = new ChartStackColumnRender(
-      true,
-      sublayersAll,
+    const chartIconPositionX = 0;
+    //-- Chart render
+    stackColumnChartRender({
+      render: new ChartStackColumnRender(),
+      revit: true,
+      layers: sublayersAll,
       root,
       chart,
-      chartData,
-      buildingLayer,
-      queryc,
-      buildingTypes,
-      undefined,
-      ["Completed", "To be Constructed", "Under Construction"],
-      ["comp", "incomp", "ongoing"],
-      statusArray,
-      status_field,
-      chart_colors,
-      chartBorderLineColor,
-      chartBorderLineWidth,
-      arcgisScene?.view,
-      setSublayerViewFilter,
+      data: chartData,
+      buildingLayer: buildingLayer,
+      qChart: queryc,
+      chartCategoryTypes: building_types_q,
+      chartCategoryTypeField: undefined,
+      statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
+      statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
+      statusArray: status_q,
+      statusField: status_f,
+      seriesStatusColor: status_q.map((c: any) => c.color),
+      strokeColor: chartBorderLineColor,
+      strokeWidth: chartBorderLineWidth,
+      view: arcgisScene?.view,
+      setLayerViewFilter: setSublayerViewFilter,
       new_chartIconSize,
       new_axisFontSize,
-      undefined,
+      chartIconPositionX,
       chartPaddingRightIconLabel,
       legend,
-      setChartPanelwidth,
-    );
-    crender.chartRendererColumn();
+      updateChartPanelwidth: setChartPanelwidth,
+    });
 
     chart.appear(1000, 100);
 
     return () => {
       root.dispose();
     };
-  });
+  }, [chartData, buildings]);
 
   //-- Reset clicked event in chart series
   useEffect(() => {
@@ -179,9 +193,7 @@ const ChartBuilding = () => {
     //--- Reset sublayers
     resetAllLayers({
       layers: sublayersAll,
-      qExpression: !buildings
-        ? undefined
-        : `${building_field} = '${buildings}'`,
+      qExpression: !buildings ? undefined : `${building_f} = '${buildings}'`,
     });
   }, [resetButtonClicked, buildings]);
 

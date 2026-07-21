@@ -6,36 +6,25 @@ import { useQuery } from "@tanstack/react-query";
 import { mediaTimestampToDates } from "../query";
 
 export default function DroneImageComponent() {
-  const { mediasrcpaths, mediaSelectedscale, mediatimestamp } = use(MyContext);
+  const { mediapaths, mediascale, mediatimestamp } = use(MyContext);
 
   const { data } = useQuery<any>({
     queryKey: [mediatimestamp],
-    queryFn: async () => await mediaTimestampToDates(mediatimestamp),
-    select: (response) => {
-      return {
-        yyyy1: response.yyyy1,
-        yyyy2: response.yyyy2,
-        mm1: response.mm1,
-        mm2: response.mm2,
-      };
-    },
+    queryFn: () => mediaTimestampToDates(mediatimestamp),
     staleTime: Infinity,
   });
-  const yyyy1 = data?.yyyy1 || "";
-  const yyyy2 = data?.yyyy2 || "";
-  const mm1 = data?.mm1 || "";
-  const mm2 = data?.mm2 || "";
+  const { yyyy1 = "", yyyy2 = "", mm1 = "", mm2 = "" } = data ?? {};
 
   return (
     <>
       {/* First image: */}
       <calcite-card
         style={{
-          width: img_size * mediaSelectedscale,
-          display: mediasrcpaths && mediasrcpaths[0] ? "block" : "none",
+          width: img_size * mediascale,
+          display: mediapaths && mediapaths[0] ? "block" : "none",
         }}
       >
-        <a href={mediasrcpaths && mediasrcpaths[0]} target="_blank">
+        <a href={mediapaths && mediapaths[0]} target="_blank">
           <span
             style={{
               color: "white",
@@ -46,10 +35,10 @@ export default function DroneImageComponent() {
           </span>
         </a>
         <img
-          src={mediasrcpaths && mediasrcpaths[0]}
+          src={mediapaths && mediapaths[0]}
           alt="Drone image"
-          height={img_size * mediaSelectedscale}
-          width={img_size * mediaSelectedscale}
+          height={img_size * mediascale}
+          width={img_size * mediascale}
           style={{ objectFit: "cover" }}
         />
       </calcite-card>
@@ -57,11 +46,11 @@ export default function DroneImageComponent() {
       {/* Second image: */}
       <calcite-card
         style={{
-          width: img_size * mediaSelectedscale,
-          display: mediasrcpaths && mediasrcpaths[1] ? "block" : "none",
+          width: img_size * mediascale,
+          display: mediapaths && mediapaths[1] ? "block" : "none",
         }}
       >
-        <a href={mediasrcpaths && mediasrcpaths[1]} target="_blank">
+        <a href={mediapaths && mediapaths[1]} target="_blank">
           <span
             style={{
               color: "white",
@@ -72,10 +61,10 @@ export default function DroneImageComponent() {
           </span>
         </a>
         <img
-          src={mediasrcpaths && mediasrcpaths[1]}
+          src={mediapaths && mediapaths[1]}
           alt="Drone image"
-          height={img_size * mediaSelectedscale}
-          width={img_size * mediaSelectedscale}
+          height={img_size * mediascale}
+          width={img_size * mediascale}
           style={{ objectFit: "cover" }}
           // style={{ margin: "auto" }}
         />
