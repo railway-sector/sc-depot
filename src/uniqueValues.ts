@@ -451,6 +451,15 @@ export const building_types_q = [
   { value: 6, category: "Columns", modelName: "Columns" },
 ];
 
+export const revit_types_q = [
+  { value: "000001", category: "000001" },
+  { value: "000002", category: "000002" },
+  { value: "000003", category: "000003" },
+  { value: "000004", category: "000004" },
+  { value: "000005", category: "000005" },
+  { value: "000005", category: "000006" },
+];
+
 export const b_popup = {
   title: "{Name}",
   content: [

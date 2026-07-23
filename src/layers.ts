@@ -159,6 +159,10 @@ export let sublayersAll: null | any = [];
 
 export let exteriorShellLayer: null | any;
 
+export let testSublayers: null | any = [];
+export let stf01: null | any;
+export let stf02: null | any;
+
 buildingLayer.when(() => {
   buildingLayer.allSublayers.forEach((layer: any) => {
     switch (layer.modelName) {
@@ -277,9 +281,12 @@ buildingLayer.when(() => {
   });
 });
 
+//--- TEST
+console.log(stf01);
+
 //--- CIVIL WORKS LAYER ---//
 export const buildingLayer_cw = new BuildingSceneLayer({
-  portalItem: portalItems("09a326d846c84a50a332c2b8f64d2c31"),
+  portalItem: portalItems("97d90e24ef8a43d5826a8b5190201f50"),
   legendEnabled: false,
   title: "Civil Works (LOD: 350)",
 });
@@ -288,8 +295,9 @@ export const buildingLayer_cw = new BuildingSceneLayer({
 export let architecturalLayer_cw: null | any;
 export let floorsLayer_cw: null | any;
 export let wallsLayer_cw: null | any;
+export let stairsLayer_cw: null | any;
 export let stairsRailingLayer_cw: null | any;
-export let plumbinFixturesLayer_cw: null | any;
+export let roofsLayer_cw: null | any;
 
 //-- STRUCTURAL
 export let stFoundationLayer_cw: null | any;
@@ -330,29 +338,35 @@ buildingLayer_cw.when(() => {
         floorsLayer_cw = layer;
         floorsLayer_cw.popupTemplate = cw_popup;
         floorsLayer_cw.renderer = norender;
-        floorsLayer_cw.title = "Floors";
-        //excludedLayers
-        break;
-
-      case "PlumbingFixtures":
-        plumbinFixturesLayer_cw = layer;
-        plumbinFixturesLayer_cw.popupTemplate = cw_popup;
-        plumbinFixturesLayer_cw.renderer = norender;
-        plumbinFixturesLayer_cw.title = "PlumbingFixtures";
+        floorsLayer_cw.title = "Floors (Not Monitoring)";
         break;
 
       case "StairsRailing":
         stairsRailingLayer_cw = layer;
         stairsRailingLayer_cw.popupTemplate = cw_popup;
         stairsRailingLayer_cw.renderer = norender;
-        stairsRailingLayer_cw.title = "StairsRailing";
+        stairsRailingLayer_cw.title = "StairsRailing (Not Monitoring)";
+        break;
+
+      case "Roofs":
+        roofsLayer_cw = layer;
+        roofsLayer_cw.popupTemplate = cw_popup;
+        roofsLayer_cw.renderer = norender;
+        roofsLayer_cw.title = "Roofs (Not Monitoring)";
+        break;
+
+      case "Stairs":
+        stairsLayer_cw = layer;
+        stairsLayer_cw.popupTemplate = cw_popup;
+        stairsLayer_cw.renderer = norender;
+        stairsLayer_cw.title = "Stairs (Not Monitoring)";
         break;
 
       case "Walls":
         wallsLayer_cw = layer;
         wallsLayer_cw.popupTemplate = cw_popup;
         wallsLayer_cw.renderer = norender;
-        wallsLayer_cw.title = "Walls";
+        wallsLayer_cw.title = "Walls (Not Monitoring)";
         break;
 
       case "StructuralFoundation":
