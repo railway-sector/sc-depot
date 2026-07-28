@@ -128,7 +128,7 @@ export const lotStructureGroupLayer = new GroupLayer({
 export const buildingSpotLayer = new FeatureLayer({
   portalItem: portalItems("285e68f3fcce48f6ab196f912c5c58c5"),
   popupEnabled: false,
-  outFields: ["*"],
+  outFields: ["Name"],
   labelingInfo: [labelClassBulding],
 });
 buildingSpotLayer.listMode = "hide";
