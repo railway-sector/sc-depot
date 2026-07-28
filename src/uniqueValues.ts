@@ -42,6 +42,15 @@ export const image_scales = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4];
 export const img_size = 280;
 export const timestamp_field = "timestamp";
 
+//---------------------------------------------//
+//         Time-Slider Parameter               //
+//---------------------------------------------//
+export const ts_field_q: any = [
+  { datename: "Planned Completion Date", datefield: "finish_plan" },
+  { datename: "Actual Start Date", datefield: "start_actual" },
+  { datename: "Actual Completion Date", datefield: "finish_actual" },
+];
+
 //----------------------------------------------//
 //            Alignment Layers                  //
 //----------------------------------------------//
@@ -451,15 +460,6 @@ export const building_types_q = [
   { value: 6, category: "Columns", modelName: "Columns" },
 ];
 
-export const revit_types_q = [
-  { value: "000001", category: "000001" },
-  { value: "000002", category: "000002" },
-  { value: "000003", category: "000003" },
-  { value: "000004", category: "000004" },
-  { value: "000005", category: "000005" },
-  { value: "000005", category: "000006" },
-];
-
 export const b_popup = {
   title: "{Name}",
   content: [
@@ -518,10 +518,18 @@ export const labelClassBulding = new LabelClass({
 });
 
 //--- CIVIL WORKS LAYER
+//- Use Case: Layer base format
+// export const civil_types_q = [
+//   { value: 1, category: "St.Foundation", modelName: "StructuralFoundation" },
+//   { value: 2, category: "St.Column", modelName: "StructuralColumns" },
+//   { value: 3, category: "St.Framing", modelName: "StructuralFraming" },
+// ];
+
+//- Use Case: DocName LIKE '%000002%'
 export const civil_types_q = [
-  { value: 1, category: "St.Foundation", modelName: "StructuralFoundation" },
-  { value: 2, category: "St.Column", modelName: "StructuralColumns" },
-  { value: 3, category: "St.Framing", modelName: "StructuralFraming" },
+  { value: "000002", category: "Pilecaps" },
+  { value: "000003", category: "Underpass" },
+  { value: "000004", category: "Drainage (Ref. only)" },
 ];
 
 export const cw_popup = {
@@ -550,13 +558,15 @@ export async function defineActions(event: any) {
   item.title === "Land & Structure" ||
   item.title === "ExteriorShell" ||
   item.title === "ExteriorShell (Buildings)" ||
+  item.title === "StructuralFraming" ||
   item.title === "Civil Works (LOD: 350)" ||
   item.title === "Generic Model (Not Monitoring)" ||
   item.title === "Furniture (Not Monitoring)" ||
   item.title === "Doors (Not Monitoring)" ||
   item.title === "Stairs (Not Monitoring)" ||
   item.title === "Roofs (Not Monitoring)" ||
-  item.title === "Windows (Not Monitoring)"
+  item.title === "Windows (Not Monitoring)" ||
+  item.title === "Roads"
     ? (item.visible = false)
     : (item.visible = true);
 }

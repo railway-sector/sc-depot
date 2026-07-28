@@ -50,11 +50,12 @@ const ChartCivilWork = memo(() => {
         colchart: new ChartStackColumns(),
         qChart: queryc2,
         categoryTypes: civil_types_q,
-        categoryTypeField: undefined,
+        categoryTypeField: "DocName",
         layers: sublayersArray,
         statusField: status_f,
         statusState: [1, 2, 3, 4],
       });
+      // console.log(chartData);
 
       return {
         chartData: chartData[0] || [],
@@ -138,7 +139,7 @@ const ChartCivilWork = memo(() => {
       buildingLayer: buildingLayer_cw,
       qChart: queryc2,
       chartCategoryTypes: civil_types_q,
-      chartCategoryTypeField: undefined,
+      chartCategoryTypeField: "DocName",
       statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
       statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
       statusArray: status_q,

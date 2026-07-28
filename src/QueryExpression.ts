@@ -17,9 +17,9 @@ export function queryDefinitionExpression({
 }: queryDefinitionExpressionType) {
   if (!queryExpression || !featureLayer) return;
   const layers = Array.isArray(featureLayer) ? featureLayer : [featureLayer];
-  layers.forEach(
-    (layer: any) =>
-      layer &&
-      ((layer.definitionExpression = queryExpression), (layer.visible = true)),
-  );
+  layers.forEach((layer: any) => {
+    if (!layer) return;
+    layer.definitionExpression = queryExpression;
+    layer.visible = true;
+  });
 }

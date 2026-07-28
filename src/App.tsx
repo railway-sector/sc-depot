@@ -11,7 +11,7 @@ import Header from "./components/Header";
 import MainChart from "./components/MainChart";
 import UndergroundSwitch from "./components/UndergroundSwitch";
 import { MyContext } from "./contexts/MyContext";
-import { image_scales } from "./uniqueValues";
+import { image_scales, ts_field_q } from "./uniqueValues";
 import { authenticate } from "./autho";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -24,6 +24,7 @@ export function App(): React.JSX.Element {
   }, []);
 
   const [buildings, setBuildings] = useState<any>();
+  const [newTsparam, setNewTsparam] = useState<any>(ts_field_q[0].datename);
   const [mediaopen, setMediaopen] = useState<boolean>(false);
   const [mediatype, setMediatype] = useState<string>();
   const [mediapaths, setMediapaths] = useState<string>();
@@ -32,6 +33,10 @@ export function App(): React.JSX.Element {
 
   const updateBuildings = useCallback((newBuilding: any) => {
     setBuildings(newBuilding);
+  }, []);
+
+  const updateNewTsparam = useCallback((newParam: any) => {
+    setNewTsparam(newParam);
   }, []);
 
   const updateMediaopen = useCallback((newImageOpen: any) => {
@@ -64,12 +69,14 @@ export function App(): React.JSX.Element {
             <MyContext
               value={{
                 buildings,
+                newTsparam,
                 mediaopen,
                 mediatype,
                 mediapaths,
                 mediascale,
                 mediatimestamp,
                 updateBuildings,
+                updateNewTsparam,
                 updateMediaopen,
                 updateMediatype,
                 updateMediapaths,

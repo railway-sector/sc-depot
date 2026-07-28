@@ -2,6 +2,28 @@
 import QueryExpressionLayers from "query-layers-expression";
 import { buildingSpotLayer, dateTable } from "./layers";
 
+//---------------------------------//
+// Reset Layers for Time slider    //
+//---------------------------------//
+interface TimeSliderResetType {
+  layers: any[];
+  field_name: string;
+  new_date: any;
+  contractcp?: string;
+}
+export function layersTimeSliderReset({
+  layers,
+  field_name,
+  new_date,
+  contractcp,
+}: TimeSliderResetType) {
+  layers.forEach((layer: any) => {
+    if (!contractcp) {
+      layer.definitionExpression = `${field_name} <= date '${new_date}'`;
+    }
+  });
+}
+
 //---------------------------------------------------------//
 //                 Add Layers to Map                      //
 //---------------------------------------------------------//

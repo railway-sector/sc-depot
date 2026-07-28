@@ -281,29 +281,26 @@ buildingLayer.when(() => {
   });
 });
 
-//--- TEST
-console.log(stf01);
-
 //--- CIVIL WORKS LAYER ---//
 export const buildingLayer_cw = new BuildingSceneLayer({
-  portalItem: portalItems("97d90e24ef8a43d5826a8b5190201f50"),
+  portalItem: portalItems("66cf97573f814a23bf4c8debbab7352a"),
   legendEnabled: false,
   title: "Civil Works (LOD: 350)",
 });
 
 //-- ARCHITECTURAL
 export let architecturalLayer_cw: null | any;
-export let floorsLayer_cw: null | any;
-export let wallsLayer_cw: null | any;
-export let stairsLayer_cw: null | any;
-export let stairsRailingLayer_cw: null | any;
-export let roofsLayer_cw: null | any;
 
 //-- STRUCTURAL
-export let stFoundationLayer_cw: null | any;
-export let stFramingLayer_cw: null | any;
-export let stColumnsLayer_cw: null | any;
 export let genericModelLayer_cw: null | any;
+export let pilecapsLayer_cw: null | any;
+export let underpassLayer_cw: null | any;
+export let drainageLayer_cw: null | any;
+
+//--- INFRASTRUCTURE
+export let roadsLayer_cw: null | any;
+export let stcolumnsLayer_cw: null | any;
+export let stfoundationLayer_cw: null | any;
 
 export let sublayersCivilAll: null | any = [];
 export let exteriorShellLayer_cw: null | any;
@@ -334,63 +331,52 @@ buildingLayer_cw.when(() => {
         genericModelLayer_cw.renderer = norender;
         break;
 
-      case "Floors":
-        floorsLayer_cw = layer;
-        floorsLayer_cw.popupTemplate = cw_popup;
-        floorsLayer_cw.renderer = norender;
-        floorsLayer_cw.title = "Floors (Not Monitoring)";
+      case "NSCR_Ex.NSCREXUSER.Pilecaps_SC_Depot_Civil_Work": //case "Pilecaps":
+        pilecapsLayer_cw = layer;
+        pilecapsLayer_cw.title = "Pile Caps";
+        pilecapsLayer_cw.renderer = b_renderer;
+        pilecapsLayer_cw.popupTemplate = cw_popup;
+        sublayersCivilAll.push({ name: layer.modelName, layer: layer });
         break;
 
-      case "StairsRailing":
-        stairsRailingLayer_cw = layer;
-        stairsRailingLayer_cw.popupTemplate = cw_popup;
-        stairsRailingLayer_cw.renderer = norender;
-        stairsRailingLayer_cw.title = "StairsRailing (Not Monitoring)";
+      case "NSCR_Ex.NSCREXUSER.Underpass_SC_Depot_Civil_Work":
+        underpassLayer_cw = layer;
+        underpassLayer_cw.title = "Underpass";
+        underpassLayer_cw.renderer = b_renderer;
+        underpassLayer_cw.popupTemplate = cw_popup;
+        sublayersCivilAll.push({ name: layer.modelName, layer: layer });
         break;
 
-      case "Roofs":
-        roofsLayer_cw = layer;
-        roofsLayer_cw.popupTemplate = cw_popup;
-        roofsLayer_cw.renderer = norender;
-        roofsLayer_cw.title = "Roofs (Not Monitoring)";
-        break;
-
-      case "Stairs":
-        stairsLayer_cw = layer;
-        stairsLayer_cw.popupTemplate = cw_popup;
-        stairsLayer_cw.renderer = norender;
-        stairsLayer_cw.title = "Stairs (Not Monitoring)";
-        break;
-
-      case "Walls":
-        wallsLayer_cw = layer;
-        wallsLayer_cw.popupTemplate = cw_popup;
-        wallsLayer_cw.renderer = norender;
-        wallsLayer_cw.title = "Walls (Not Monitoring)";
+      case "NSCR_Ex.NSCREXUSER.Drainage_SC_Depot_Civil_Work":
+        drainageLayer_cw = layer;
+        drainageLayer_cw.title = "Drainage";
+        drainageLayer_cw.renderer = b_renderer;
+        drainageLayer_cw.popupTemplate = cw_popup;
+        sublayersCivilAll.push({ name: layer.modelName, layer: layer });
         break;
 
       case "StructuralFoundation":
-        stFoundationLayer_cw = layer;
-        stFoundationLayer_cw.popupTemplate = cw_popup;
-        stFoundationLayer_cw.renderer = b_renderer;
-        stFoundationLayer_cw.title = "StructuralFoundation";
-        sublayersCivilAll.push({ name: layer.modelName, layer: layer });
+        stfoundationLayer_cw = layer;
+        stfoundationLayer_cw.title = "Structural Foundation (civil)";
+        stfoundationLayer_cw.renderer = norender;
+        stfoundationLayer_cw.popupTemplate = cw_popup;
+        stfoundationLayer_cw.visible = false;
         break;
 
       case "StructuralColumns":
-        stColumnsLayer_cw = layer;
-        stColumnsLayer_cw.popupTemplate = cw_popup;
-        stColumnsLayer_cw.renderer = b_renderer;
-        stColumnsLayer_cw.title = "StructuralColumns";
-        sublayersCivilAll.push({ name: layer.modelName, layer: layer });
+        stcolumnsLayer_cw = layer;
+        stcolumnsLayer_cw.title = "Structural Columns (civil)";
+        stcolumnsLayer_cw.renderer = norender;
+        stcolumnsLayer_cw.popupTemplate = cw_popup;
+        stcolumnsLayer_cw.visible = false;
         break;
 
-      case "StructuralFraming":
-        stFramingLayer_cw = layer;
-        stFramingLayer_cw.popupTemplate = cw_popup;
-        stFramingLayer_cw.renderer = b_renderer;
-        stFramingLayer_cw.title = "StructuralFraming (Reference only?)";
-        sublayersCivilAll.push({ name: layer.modelName, layer: layer });
+      case "Roads":
+        roadsLayer_cw = layer;
+        roadsLayer_cw.title = "Roads (civil)";
+        roadsLayer_cw.renderer = norender;
+        roadsLayer_cw.popupTemplate = cw_popup;
+        roadsLayer_cw.visible = false;
         break;
 
       default:

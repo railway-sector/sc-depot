@@ -2,12 +2,14 @@ import { createContext } from "react";
 
 type MyDropdownContextType = {
   buildings: any;
+  newTsparam: any;
   mediaopen: any;
   mediatype: any;
   mediapaths: any;
   mediascale: any;
   mediatimestamp: any;
   updateBuildings: any;
+  updateNewTsparam: any;
   updateMediaopen: any;
   updateMediatype: any;
   updateMediapaths: any;
@@ -17,12 +19,14 @@ type MyDropdownContextType = {
 
 const initialState = {
   buildings: undefined,
-  updateBuildings: undefined,
+  newTsparam: undefined,
   mediaopen: undefined,
   mediatype: undefined,
   mediapaths: undefined,
   mediascale: undefined,
   mediatimestamp: undefined,
+  updateBuildings: undefined,
+  updateNewTsparam: undefined,
   updateMediaopen: undefined,
   updateMediatype: undefined,
   updateMediapaths: undefined,
