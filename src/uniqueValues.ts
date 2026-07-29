@@ -554,18 +554,21 @@ export async function defineActions(event: any) {
     item.panel = { content: "legend", open: true };
   }
   item.title === "Depot Civil Works" ||
-  item.title === "Architectural (reference only)" ||
   item.title === "Land & Structure" ||
   item.title === "ExteriorShell" ||
   item.title === "ExteriorShell (Buildings)" ||
   item.title === "StructuralFraming" ||
   item.title === "Civil Works (LOD: 350)" ||
+  item.title === "Architectural (reference only)" ||
   item.title === "Generic Model (Not Monitoring)" ||
   item.title === "Furniture (Not Monitoring)" ||
   item.title === "Doors (Not Monitoring)" ||
   item.title === "Stairs (Not Monitoring)" ||
   item.title === "Roofs (Not Monitoring)" ||
   item.title === "Windows (Not Monitoring)" ||
+  item.title === "Infrastructure" ||
+  item.title === "Structural Columns (civil)" ||
+  item.title === "Structural Foundation (civil)" ||
   item.title === "Roads"
     ? (item.visible = false)
     : (item.visible = true);

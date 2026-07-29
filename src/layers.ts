@@ -298,6 +298,7 @@ export let underpassLayer_cw: null | any;
 export let drainageLayer_cw: null | any;
 
 //--- INFRASTRUCTURE
+export let infrastructureLayer_cw: null | any;
 export let roadsLayer_cw: null | any;
 export let stcolumnsLayer_cw: null | any;
 export let stfoundationLayer_cw: null | any;
@@ -316,6 +317,12 @@ buildingLayer_cw.when(() => {
         architecturalLayer_cw = layer;
         architecturalLayer_cw.visible = false;
         architecturalLayer_cw.title = "Architectural (reference only)";
+        break;
+
+      case "Infrastructure":
+        infrastructureLayer_cw = layer;
+        infrastructureLayer_cw.visible = false;
+        infrastructureLayer_cw.title = "Infrastructure";
         break;
 
       case "Overview":
