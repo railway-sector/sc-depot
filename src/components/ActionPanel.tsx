@@ -137,13 +137,13 @@ function ActionPanel() {
             onClick={handleActionClick}
           ></calcite-action>
 
-          {/* <calcite-action
+          <calcite-action
             data-action-id="timeslider"
             icon="sliders-horizontal"
             text="Time Slider"
             id="timeslider"
             onClick={handleActionClick}
-          ></calcite-action> */}
+          ></calcite-action>
 
           <calcite-action
             data-action-id="information"
@@ -188,11 +188,11 @@ function ActionPanel() {
           ></arcgis-direct-line-measurement-3d>
         </calcite-panel>
 
-        {/* <calcite-panel
+        <calcite-panel
           className="timeslider"
           data-panel-id="timeslider"
           hidden
-        ></calcite-panel> */}
+        ></calcite-panel>
 
         <calcite-panel heading="Description" data-panel-id="information" hidden>
           {nextWidget === "information" ? (

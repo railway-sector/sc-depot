@@ -527,9 +527,12 @@ export const labelClassBulding = new LabelClass({
 
 //- Use Case: DocName LIKE '%000002%'
 export const civil_types_q = [
+  // { value: "000001", category: "Roads" },
   { value: "000002", category: "Pilecaps" },
   { value: "000003", category: "Underpass" },
-  { value: "000004", category: "Drainage (Ref. only)" },
+  { value: "000004", category: "Drainage" },
+  // { value: "000005", category: "Pedestrian" },
+  // { value: "000006", category: "FrenchDrain" },
 ];
 
 export const cw_popup = {
@@ -559,7 +562,6 @@ export async function defineActions(event: any) {
   item.title === "ExteriorShell (Buildings)" ||
   item.title === "StructuralFraming" ||
   item.title === "Civil Works (LOD: 350)" ||
-  item.title === "Architectural (reference only)" ||
   item.title === "Generic Model (Not Monitoring)" ||
   item.title === "Furniture (Not Monitoring)" ||
   item.title === "Doors (Not Monitoring)" ||
@@ -567,9 +569,9 @@ export async function defineActions(event: any) {
   item.title === "Roofs (Not Monitoring)" ||
   item.title === "Windows (Not Monitoring)" ||
   item.title === "Infrastructure" ||
-  item.title === "Structural Columns (civil)" ||
-  item.title === "Structural Foundation (civil)" ||
-  item.title === "Roads"
+  item.title === "Roads" ||
+  item.title === "Pedestrian" ||
+  item.title === "French Drain"
     ? (item.visible = false)
     : (item.visible = true);
 }
