@@ -126,7 +126,7 @@ export const lotStructureGroupLayer = new GroupLayer({
 //----------------------------------------------//
 //--- BUILDINGS LAYER ---//
 export const buildingSpotLayer = new FeatureLayer({
-  portalItem: portalItems("285e68f3fcce48f6ab196f912c5c58c5"),
+  portalItem: portalItems("39c51c770fa6415ebaf6f8d0bf40aa32"),
   popupEnabled: false,
   outFields: ["Name"],
   labelingInfo: [labelClassBulding],
@@ -143,11 +143,9 @@ export const buildingLayer = new BuildingSceneLayer({
 export let columnsLayer: null | any;
 export let floorsLayer: null | any;
 export let wallsLayer: null | any;
-export let doorsLayer: null | any;
 export let roofsLayer: null | any;
-export let furnitureLayer: null | any;
 export let stairsLayer: null | any;
-export let windowsLayer: null | any;
+export let ceilingsLayer: null | any;
 
 //--- STRUCTURAL
 export let stFramingLayer: null | any;
@@ -187,22 +185,6 @@ buildingLayer.when(() => {
         genericModelLayer.renderer = norender;
         break;
 
-      case "Furniture":
-        furnitureLayer = layer;
-        furnitureLayer.popupTemplate = b_popup;
-        furnitureLayer.title = "Furniture (Not Monitoring)";
-        furnitureLayer.visible = false;
-        furnitureLayer.renderer = norender;
-        break;
-
-      case "Doors":
-        doorsLayer = layer;
-        doorsLayer.popupTemplate = b_popup;
-        doorsLayer.title = "Doors (Not Monitoring)";
-        doorsLayer.visible = false;
-        doorsLayer.renderer = norender;
-        break;
-
       case "Columns":
         columnsLayer = layer;
         columnsLayer.popupTemplate = b_popup;
@@ -227,6 +209,14 @@ buildingLayer.when(() => {
         stairsLayer.renderer = norender;
         break;
 
+      case "Ceilings":
+        ceilingsLayer = layer;
+        ceilingsLayer.popupTemplate = b_popup;
+        ceilingsLayer.title = "Ceilings (Not Monitoring)";
+        ceilingsLayer.visible = false;
+        ceilingsLayer.renderer = norender;
+        break;
+
       case "Roofs":
         roofsLayer = layer;
         roofsLayer.popupTemplate = b_popup;
@@ -241,14 +231,6 @@ buildingLayer.when(() => {
         wallsLayer.title = "Walls";
         wallsLayer.renderer = b_renderer;
         sublayersAll.push({ name: layer.modelName, layer: layer });
-        break;
-
-      case "Windows":
-        windowsLayer = layer;
-        windowsLayer.popupTemplate = b_popup;
-        windowsLayer.title = "Windows (Not Monitoring)";
-        windowsLayer.visible = false;
-        windowsLayer.renderer = norender;
         break;
 
       case "StructuralFraming":

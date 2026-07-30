@@ -563,8 +563,7 @@ export async function defineActions(event: any) {
   item.title === "StructuralFraming" ||
   item.title === "Civil Works (LOD: 350)" ||
   item.title === "Generic Model (Not Monitoring)" ||
-  item.title === "Furniture (Not Monitoring)" ||
-  item.title === "Doors (Not Monitoring)" ||
+  item.title === "Ceilings (Not Monitoring)" ||
   item.title === "Stairs (Not Monitoring)" ||
   item.title === "Roofs (Not Monitoring)" ||
   item.title === "Windows (Not Monitoring)" ||
