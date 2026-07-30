@@ -126,7 +126,7 @@ export const lotStructureGroupLayer = new GroupLayer({
 //----------------------------------------------//
 //--- BUILDINGS LAYER ---//
 export const buildingSpotLayer = new FeatureLayer({
-  portalItem: portalItems("39c51c770fa6415ebaf6f8d0bf40aa32"),
+  portalItem: portalItems("285e68f3fcce48f6ab196f912c5c58c5"),
   popupEnabled: false,
   outFields: ["Name"],
   labelingInfo: [labelClassBulding],
@@ -134,7 +134,7 @@ export const buildingSpotLayer = new FeatureLayer({
 buildingSpotLayer.listMode = "hide";
 
 export const buildingLayer = new BuildingSceneLayer({
-  portalItem: portalItems("2fcb3db0ec324f92805cc45c0e79f29d"),
+  portalItem: portalItems("39c51c770fa6415ebaf6f8d0bf40aa32"),
   legendEnabled: false,
   title: "Building (LOD: 350)",
 });
@@ -190,7 +190,7 @@ buildingLayer.when(() => {
         columnsLayer.popupTemplate = b_popup;
         columnsLayer.title = "Columns";
         columnsLayer.renderer = b_renderer;
-        sublayersAll.push({ name: layer.modelName, layer: layer });
+        // sublayersAll.push({ name: layer.modelName, layer: layer });
         break;
 
       case "Floors":
