@@ -27,8 +27,8 @@ import "@esri/calcite-components/components/calcite-button";
 import { MyContext } from "../contexts/MyContext";
 import { image_scales } from "../uniqueValues";
 import { addLayersToMap, updateMediaInfo } from "../query";
-import DroneImageComponent from "./DroneImageComponent";
-import DroneVideoComponent from "./DroneVideoComponent";
+import DroneImage from "./DroneImage";
+import DroneVideo from "./DroneVideo";
 
 function MapDisplay() {
   const {
@@ -100,13 +100,12 @@ function MapDisplay() {
 
   //--- Helper function to choose image or video Component
   const mediaComponents: Record<string, React.ReactNode> = {
-    image: <DroneImageComponent />,
-    video: <DroneVideoComponent />,
+    image: <DroneImage />,
+    video: <DroneVideo />,
   };
 
   return (
     <arcgis-scene
-      // item-id="5ba14f5a7db34710897da0ce2d46d55f"
       basemap="dark-gray-vector"
       ground="world-elevation"
       viewingMode="local"
@@ -117,11 +116,7 @@ function MapDisplay() {
       }}
     >
       {/* ---------- Media Container ---------- */}
-      <div
-        style={{
-          display: mediaopen === true ? "block" : "none",
-        }}
-      >
+      <div style={{ display: mediaopen === true ? "block" : "none" }}>
         {/* Close Button */}
         <div style={{ display: "flex", margin: "5px" }}>
           {/* Close Button */}

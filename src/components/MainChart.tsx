@@ -4,18 +4,20 @@ import "@esri/calcite-components/components/calcite-tab-nav";
 import "@esri/calcite-components/components/calcite-tab-title";
 import "@arcgis/map-components/dist/components/arcgis-scene";
 import "@arcgis/map-components/components/arcgis-scene";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { buildingLayer, buildingLayer_cw } from "../layers";
 
 // import LotChart from "./LotChart";
 import "../index.css";
 import BuildingChart from "./ChartBuilding";
 import CivilWorkChart from "./ChartCivilWork";
+import { MyContext } from "../contexts/MyContext";
 
 function MainChart() {
+  const { updateChartTab, chartTab } = use(MyContext);
   const [buildingLayerLoaded, setBuildingLayerLoaded] = useState<any>(); // 'loaded'
   const [buildingLayerCwLoaded, setBuildingLayerCwLoaded] = useState<any>();
-  const [chartTabName, setChartTabName] = useState<string>("depotBuilding");
+  // const [chartTabName, setChartTabName] = useState<string>("depotBuilding");
 
   // Somehow if you do not add arcgisScene here, the child components (ie., LotChart)
   // will not inherit arcgisScene
@@ -32,10 +34,10 @@ function MainChart() {
   }, []);
 
   useEffect(() => {
-    const isDepot = chartTabName === "depotBuilding";
+    const isDepot = chartTab === "depotBuilding";
     buildingLayer.visible = isDepot;
     buildingLayer_cw.visible = !isDepot;
-  }, [chartTabName]);
+  }, [chartTab]);
 
   return (
     <>
@@ -46,7 +48,6 @@ function MainChart() {
           borderRightWidth: 5,
           borderLeftWidth: 5,
           borderBottomWidth: 5,
-          // borderTopWidth: 5,
           borderColor: "#555555",
         }}
         scale="l"
@@ -57,7 +58,7 @@ function MainChart() {
           slot="title-group"
           id="thetabs"
           oncalciteTabChange={(event: any) =>
-            setChartTabName(event.srcElement.selectedTitle.className)
+            updateChartTab(event.srcElement.selectedTitle.className)
           }
         >
           <calcite-tab-title className="depotBuilding">
@@ -70,13 +71,16 @@ function MainChart() {
 
         {/* CalciteTab: Building */}
         <calcite-tab>
-          {buildingLayerLoaded === "loaded" && <BuildingChart />}
+          {buildingLayerLoaded === "loaded" && chartTab === "depotBuilding" && (
+            <BuildingChart />
+          )}
         </calcite-tab>
 
         {/* CalciteTab: Civil Works */}
         <calcite-tab>
-          {buildingLayerCwLoaded === "loaded" &&
-            chartTabName === "civilWorks" && <CivilWorkChart />}
+          {buildingLayerCwLoaded === "loaded" && chartTab === "civilWorks" && (
+            <CivilWorkChart />
+          )}
         </calcite-tab>
       </calcite-tabs>
     </>

@@ -4,13 +4,7 @@ import { buildingLayer_cw, sublayersCivilAll } from "../layers";
 
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
-import {
-  thousands_separators,
-  resetAllLayers,
-  stackColumnChartRender,
-  makeQuery,
-  stackColumnChartData,
-} from "../query";
+import { thousands_separators, resetAllLayers } from "../query";
 import { civil_types_q, status_f, status_q } from "../uniqueValues";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
@@ -19,43 +13,28 @@ import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
 import ChartStackColumnRender from "chart-stack-column-render";
 import ChartStackColumns from "chart-stack-column";
+import QueryExpressionLayers from "query-layers-expression";
 
-// Draw chart
-const ChartCivilWork = memo(() => {
-  const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
-  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
-
-  const legendRef = useRef<unknown | any | undefined>({});
-  const chartRef = useRef<unknown | any | undefined>({});
-  const [sublayerViewFilter, setSublayerViewFilter] = useState<
-    SubLayerView | any
-  >();
-  const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
-  const chartID = "depot-civil-works";
-
-  //--- Common qValues and qFields for QueryExpressionLayers class
-  const queryc2 = makeQuery([undefined], [undefined]);
-
-  const sublayersArray = sublayersCivilAll.map((item: any) => item.layer);
-
-  const { data } = useQuery<any>({
-    queryKey: ["civilWorkChartData", chartID],
+//------------------------------//
+//      useCivilWorkData        //
+//------------------------------//
+function useCivilWorkData(query: any, sublayersArray: any) {
+  return useQuery<any>({
+    queryKey: ["civilWorkChartData"],
     queryFn: async () => {
       queryDefinitionExpression({
-        queryExpression: queryc2,
+        queryExpression: query.queryExpression(),
         featureLayer: sublayersArray,
       });
 
-      const chartData = await stackColumnChartData({
-        colchart: new ChartStackColumns(),
-        qChart: queryc2,
+      const chartData = await new ChartStackColumns({
+        where: query,
         categoryTypes: civil_types_q,
         categoryTypeField: "DocName",
         layers: sublayersArray,
         statusField: status_f,
         statusState: [1, 2, 3, 4],
-      });
-      // console.log(chartData);
+      }).chartDataStackColumns();
 
       return {
         chartData: chartData[0] || [],
@@ -65,6 +44,25 @@ const ChartCivilWork = memo(() => {
     },
     staleTime: Infinity,
   });
+}
+
+// Draw chart
+const ChartCivilWork = memo(() => {
+  const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
+  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
+
+  const legendRef = useRef<unknown | any | undefined>({});
+  const chartRef = useRef<unknown | any | undefined>({});
+  const [sublayerViewFilter, setSublayerViewFilter] = useState<SubLayerView>();
+  const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
+  const chartID = "depot-civil-works";
+
+  //--- Query expression
+  const q1 = new QueryExpressionLayers({});
+
+  const sublayersArray = sublayersCivilAll.map((item: any) => item.layer);
+
+  const { data } = useCivilWorkData(q1, sublayersArray);
   const chartData = data?.chartData || [];
   const totaln = data?.totaln || 0;
   const perc_comp = data?.perc || 0;
@@ -94,6 +92,7 @@ const ChartCivilWork = memo(() => {
 
   useEffect(() => {
     const root = rootSetter({ chartID: chartID });
+    root.setThemes([]);
 
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
@@ -129,15 +128,14 @@ const ChartCivilWork = memo(() => {
 
     const chartIconPositionX = 0;
     //-- Chart render
-    stackColumnChartRender({
-      render: new ChartStackColumnRender(),
+    new ChartStackColumnRender({
       revit: true,
       layers: sublayersCivilAll,
       root,
       chart,
       data: chartData,
       buildingLayer: buildingLayer_cw,
-      qChart: queryc2,
+      where: q1,
       chartCategoryTypes: civil_types_q,
       chartCategoryTypeField: "DocName",
       statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
@@ -155,8 +153,7 @@ const ChartCivilWork = memo(() => {
       chartPaddingRightIconLabel,
       legend,
       updateChartPanelwidth: setChartPanelwidth,
-    });
-    chart.appear(1000, 100);
+    }).chartRendererColumn();
 
     return () => {
       root.dispose();
@@ -236,7 +233,6 @@ const ChartCivilWork = memo(() => {
       <div
         id={chartID}
         style={{
-          // width: "24vw",
           height: "64vh",
           backgroundColor: "rgb(0,0,0,0)",
           color: "white",
@@ -245,12 +241,7 @@ const ChartCivilWork = memo(() => {
       ></div>
       <div
         id="filterButton"
-        style={{
-          width: "50%",
-          marginLeft: "30%",
-          marginTop: "4%",
-          // paddingTop: "10%",
-        }}
+        style={{ width: "50%", marginLeft: "30%", marginTop: "4%" }}
       >
         <calcite-button
           iconEnd="reset"

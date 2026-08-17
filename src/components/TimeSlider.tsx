@@ -6,10 +6,10 @@ import { primaryLabelColor, ts_field_q } from "../uniqueValues";
 import "@arcgis/map-components/components/arcgis-time-slider";
 import { MyContext } from "../contexts/MyContext";
 import { use, useEffect, useMemo } from "react";
-import { sublayersCivilAll } from "../layers";
+import { sublayersAll, sublayersCivilAll } from "../layers";
 
 export default function TimeSlider() {
-  const { updateNewTsparam, newTsparam } = use(MyContext);
+  const { updateNewTsparam, newTsparam, chartTab } = use(MyContext);
   const arcgisScene = document.querySelector("arcgis-scene");
   const timeSlider: any = document.querySelector("arcgis-time-slider");
 
@@ -46,10 +46,7 @@ export default function TimeSlider() {
       };
 
       timeSlider.stops = {
-        interval: {
-          value: 1,
-          unit: "months",
-        },
+        interval: { value: 1, unit: "months" },
       };
 
       reactiveUtils.watch(
@@ -59,8 +56,11 @@ export default function TimeSlider() {
             const { year, month, day } = yearMonthDay(timeExtent.end);
             const new_date = `${year}-${month}-${day}`;
 
+            const sublayers =
+              chartTab === "depotBuilding" ? sublayersAll : sublayersCivilAll;
+
             layersTimeSliderReset({
-              layers: sublayersCivilAll.map((l: any) => l.layer),
+              layers: sublayers.map((l: any) => l.layer),
               field_name: newDateField,
               new_date: new_date,
             });

@@ -30,6 +30,7 @@ export function App(): React.JSX.Element {
   const [mediapaths, setMediapaths] = useState<string>();
   const [mediascale, setMediascale] = useState<any>(image_scales[0]);
   const [mediatimestamp, setMediatimestamp] = useState<any>();
+  const [chartTab, setChartTab] = useState<any>("depotBuilding");
 
   const updateBuildings = useCallback((newBuilding: any) => {
     setBuildings(newBuilding);
@@ -59,6 +60,10 @@ export function App(): React.JSX.Element {
     setMediatimestamp(NewTime);
   }, []);
 
+  const updateChartTab = useCallback((NewTab: any) => {
+    setChartTab(NewTab);
+  }, []);
+
   return (
     <>
       {loggedInState === true ? (
@@ -75,6 +80,7 @@ export function App(): React.JSX.Element {
                 mediapaths,
                 mediascale,
                 mediatimestamp,
+                chartTab,
                 updateBuildings,
                 updateNewTsparam,
                 updateMediaopen,
@@ -82,6 +88,7 @@ export function App(): React.JSX.Element {
                 updateMediapaths,
                 updateMediascale,
                 updateMediatimestamp,
+                updateChartTab,
               }}
             >
               <QueryClientProvider client={queryClient}>

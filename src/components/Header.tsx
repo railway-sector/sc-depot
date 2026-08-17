@@ -28,14 +28,11 @@ function Header() {
         }}
       >
         <img
-          src="https://EijiGorilla.github.io/Symbols/Projec_Logo/DOTr_Logo_v2.png"
+          src="https://EijiGorilla.github.io/Symbols/Projec_Logo/DOTr_Logo_v2.svg"
           alt="DOTr Logo"
           height={"55px"}
           width={"55px"}
-          style={{
-            marginBottom: "auto",
-            marginTop: "auto",
-          }}
+          style={{ marginBottom: "auto", marginTop: "auto" }}
         />
         <b
           style={{
@@ -49,11 +46,7 @@ function Header() {
           SC Depot
         </b>
         <div
-          style={{
-            color: "#d1d5db",
-            marginTop: "auto",
-            marginLeft: "auto",
-          }}
+          style={{ color: "#d1d5db", marginTop: "auto", marginLeft: "auto" }}
         >
           {!asofdate ? "" : "As of " + asofdate}
         </div>
@@ -73,10 +66,11 @@ function Header() {
           </div>
 
           <img
-            src="https://EijiGorilla.github.io/Symbols/Projec_Logo/GCR LOGO.png"
+            src="https://EijiGorilla.github.io/Symbols/Projec_Logo/GCR_LOGO.svg"
             alt="GCR Logo"
             height={"50px"}
             width={"75px"}
+            style={{ backgroundColor: "#f0e7e7" }}
           />
         </div>
       </header>

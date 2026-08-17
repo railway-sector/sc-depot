@@ -4,22 +4,33 @@ import "@esri/calcite-components/components/calcite-shell-panel";
 import "@esri/calcite-components/components/calcite-action";
 import "@esri/calcite-components/components/calcite-action-bar";
 import "@arcgis/map-components/components/arcgis-building-explorer";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import "@arcgis/map-components/components/arcgis-basemap-gallery";
 import "@arcgis/map-components/components/arcgis-layer-list";
 import "@arcgis/map-components/components/arcgis-legend";
 import "@arcgis/map-components/components/arcgis-direct-line-measurement-3d";
-import { buildingLayer } from "../layers";
-import { defineActions } from "../uniqueValues";
+import { buildingLayer, sublayersAll, sublayersCivilAll } from "../layers";
+import { building_f, defineActions } from "../uniqueValues";
 import TimeSlider from "./TimeSlider";
+import { MyContext } from "../contexts/MyContext";
 
 function ActionPanel() {
+  const { chartTab, buildings } = use(MyContext);
   const shellPanel: any = document.getElementById("left-shell-panel");
   const timeSlider = document.querySelector("arcgis-time-slider");
 
-  //--- Define active & next widget states
+  //-----------------------------------------
+  //   Define active & next widget states
+  //-----------------------------------------
   const [activeWidget, setActiveWidget] = useState(null);
   const [nextWidget, setNextWidget] = useState(null);
+
+  //--- Render only when selected
+  const [hasOpenedBasemaps, setHasOpenedBasemaps] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (nextWidget === "basemaps") setHasOpenedBasemaps(true);
+  }, [nextWidget]);
 
   //--- Widget (Line measurement & Building Explorer)
   const directLineMeasure = document.querySelector(
@@ -68,6 +79,17 @@ function ActionPanel() {
       //--- Timesilder: Reset
       if (timeSlider) {
         timeSlider.timeExtent = null;
+        if (chartTab === "depotBuilding") {
+          sublayersAll.map((sublayer: any) => {
+            sublayer.layer.definitionExpression = `${building_f} = '${buildings}'`;
+          });
+        }
+
+        if (chartTab === "civilWorks") {
+          sublayersCivilAll.map((sublayer: any) => {
+            sublayer.layer.definitionExpression = "1=1";
+          });
+        }
       }
     }
 
@@ -79,9 +101,7 @@ function ActionPanel() {
       shellPanel.collapsed = false;
 
       //--- Timesilder Panel: Collapse
-      if (nextWidget === "timeslider") {
-        shellPanel.collapsed = true;
-      }
+      if (nextWidget === "timeslider") shellPanel.collapsed = true;
     }
   });
 
@@ -92,7 +112,6 @@ function ActionPanel() {
         id="left-shell-panel"
         displayMode="dock"
         collapsed
-        // style={{ "--calcite-shell-panel-background-color": "#2b2b2b" }}
       >
         <calcite-action-bar
           slot="action-bar"
@@ -109,7 +128,6 @@ function ActionPanel() {
             icon="layers"
             text="layers"
             id="layers"
-            //textEnabled={true}
             onClick={handleActionClick}
           ></calcite-action>
 
@@ -137,13 +155,15 @@ function ActionPanel() {
             onClick={handleActionClick}
           ></calcite-action>
 
-          <calcite-action
-            data-action-id="timeslider"
-            icon="sliders-horizontal"
-            text="Time Slider"
-            id="timeslider"
-            onClick={handleActionClick}
-          ></calcite-action>
+          {chartTab === "civilWorks" && (
+            <calcite-action
+              data-action-id="timeslider"
+              icon="sliders-horizontal"
+              text="Time Slider"
+              id="timeslider"
+              onClick={handleActionClick}
+            ></calcite-action>
+          )}
 
           <calcite-action
             data-action-id="information"
@@ -165,7 +185,9 @@ function ActionPanel() {
         </calcite-panel>
 
         <calcite-panel heading="Basemaps" data-panel-id="basemaps" hidden>
-          <arcgis-basemap-gallery referenceElement="arcgis-scene"></arcgis-basemap-gallery>
+          {hasOpenedBasemaps ? (
+            <arcgis-basemap-gallery referenceElement="arcgis-scene"></arcgis-basemap-gallery>
+          ) : null}{" "}
         </calcite-panel>
 
         <calcite-panel
@@ -184,7 +206,6 @@ function ActionPanel() {
           <arcgis-direct-line-measurement-3d
             id="directLineMeasurementAnalysisButton"
             referenceElement="arcgis-scene"
-            // onarcgisPropertyChange={(event) => console.log(event.target.id)}
           ></arcgis-direct-line-measurement-3d>
         </calcite-panel>
 

@@ -6,9 +6,6 @@ import * as am5xy from "@amcharts/amcharts5/xy";
 import {
   thousands_separators,
   resetAllLayers,
-  makeQuery,
-  stackColumnChartData,
-  stackColumnChartRender,
   buildingSpotZoom,
 } from "../query";
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
@@ -27,48 +24,37 @@ import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
 import ChartStackColumnRender, { resetQuerc } from "chart-stack-column-render";
 import ChartStackColumns from "chart-stack-column";
+import QueryExpressionLayers from "query-layers-expression";
 
-// Draw chart
-const ChartBuilding = () => {
-  const { buildings } = use(MyContext);
-  const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
-
-  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
-  const legendRef = useRef<unknown | any | undefined>({});
-  const chartRef = useRef<unknown | any | undefined>({});
-  const chartID = "station-bar";
-
-  const [sublayerViewFilter, setSublayerViewFilter] = useState<
-    SubLayerView | any | undefined
-  >();
-  const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
-
-  //--- Common qValues and qFields for QueryExpressionLayers class
-  const queryc = makeQuery([buildings], [building_f]);
-
-  const sublayersArray = sublayersAll.map((item: any) => item.layer);
-
-  const { data } = useQuery<any>({
+//------------------------------//
+//        useDepotBuildingData  //
+//------------------------------//
+function useDepotBuildingData(
+  buildings: any,
+  query: any,
+  sublayersArray: any,
+  arcgisScene: any,
+) {
+  return useQuery<any>({
     queryKey: [building_f, buildings],
     queryFn: async () => {
       //--- Reset queryc
-      resetQuerc(queryc);
+      resetQuerc(query);
 
       //--- Filter
       queryDefinitionExpression({
-        queryExpression: queryc.queryExpression(),
+        queryExpression: query.queryExpression(),
         featureLayer: sublayersArray,
       });
 
-      const chartData = await stackColumnChartData({
-        colchart: new ChartStackColumns(),
-        qChart: queryc,
+      const chartData = await new ChartStackColumns({
+        where: query,
         categoryTypes: building_types_q,
         categoryTypeField: undefined,
         layers: sublayersArray,
         statusField: status_f,
         statusState: [1, 2, 3, 4],
-      });
+      }).chartDataStackColumns();
 
       buildingSpotZoom(buildings, arcgisScene);
 
@@ -82,6 +68,35 @@ const ChartBuilding = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+}
+
+// Draw chart
+const ChartBuilding = () => {
+  const { buildings } = use(MyContext);
+  const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
+
+  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
+  const legendRef = useRef<unknown | any | undefined>({});
+  const chartRef = useRef<unknown | any | undefined>({});
+  const chartID = "station-bar";
+
+  const [sublayerViewFilter, setSublayerViewFilter] = useState<SubLayerView>();
+  const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
+
+  //--- Query expression
+  const q1 = new QueryExpressionLayers({
+    qFields: [building_f],
+    qValues: [buildings],
+  });
+
+  const sublayersArray = sublayersAll.map((item: any) => item.layer);
+
+  const { data } = useDepotBuildingData(
+    buildings,
+    q1,
+    sublayersArray,
+    arcgisScene,
+  );
   const chartData = data?.chartData || [];
   const totaln = data?.totaln || 0;
   const perc_comp = data?.perc || 0;
@@ -112,6 +127,7 @@ const ChartBuilding = () => {
 
   useEffect(() => {
     const root = rootSetter({ chartID: chartID });
+    root.setThemes([]);
 
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
@@ -146,16 +162,16 @@ const ChartBuilding = () => {
     legendRef.current = legend;
 
     const chartIconPositionX = 0;
+
     //-- Chart render
-    stackColumnChartRender({
-      render: new ChartStackColumnRender(),
+    new ChartStackColumnRender({
       revit: true,
       layers: sublayersAll,
       root,
       chart,
       data: chartData,
       buildingLayer: buildingLayer,
-      qChart: queryc,
+      where: q1,
       chartCategoryTypes: building_types_q,
       chartCategoryTypeField: undefined,
       statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
@@ -173,9 +189,7 @@ const ChartBuilding = () => {
       chartPaddingRightIconLabel,
       legend,
       updateChartPanelwidth: setChartPanelwidth,
-    });
-
-    chart.appear(1000, 100);
+    }).chartRendererColumn();
 
     return () => {
       root.dispose();
@@ -256,7 +270,6 @@ const ChartBuilding = () => {
       <div
         id={chartID}
         style={{
-          // width: "24vw",
           height: "64vh",
           backgroundColor: "rgb(0,0,0,0)",
           color: "white",
@@ -265,12 +278,7 @@ const ChartBuilding = () => {
       ></div>
       <div
         id="filterButton"
-        style={{
-          width: "50%",
-          marginLeft: "30%",
-          marginTop: "4%",
-          // paddingTop: "10%",
-        }}
+        style={{ width: "50%", marginLeft: "30%", marginTop: "4%" }}
       >
         <calcite-button
           iconEnd="reset"

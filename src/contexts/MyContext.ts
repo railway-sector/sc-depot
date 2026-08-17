@@ -7,6 +7,7 @@ type MyDropdownContextType = {
   mediatype: any;
   mediapaths: any;
   mediascale: any;
+  chartTab: any;
   mediatimestamp: any;
   updateBuildings: any;
   updateNewTsparam: any;
@@ -15,6 +16,7 @@ type MyDropdownContextType = {
   updateMediapaths: any;
   updateMediascale: any;
   updateMediatimestamp: any;
+  updateChartTab: any;
 };
 
 const initialState = {
@@ -25,6 +27,7 @@ const initialState = {
   mediapaths: undefined,
   mediascale: undefined,
   mediatimestamp: undefined,
+  chartTab: undefined,
   updateBuildings: undefined,
   updateNewTsparam: undefined,
   updateMediaopen: undefined,
@@ -32,6 +35,7 @@ const initialState = {
   updateMediapaths: undefined,
   updateMediascale: undefined,
   updateMediatimestamp: undefined,
+  updateChartTab: undefined,
 };
 
 export const MyContext = createContext<MyDropdownContextType>({
