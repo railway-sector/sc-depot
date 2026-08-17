@@ -11,14 +11,12 @@ import {
 import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import { MyContext } from "../contexts/MyContext";
 import { buildingLayer, sublayersAll } from "../layers";
-import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import {
   building_f,
   building_types_q,
   status_f,
   status_q,
 } from "../uniqueValues";
-import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import { queryDefinitionExpression } from "../queryExpression";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
@@ -80,7 +78,6 @@ const ChartBuilding = () => {
   const chartRef = useRef<unknown | any | undefined>({});
   const chartID = "station-bar";
 
-  const [sublayerViewFilter, setSublayerViewFilter] = useState<SubLayerView>();
   const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
 
   //--- Query expression
@@ -182,7 +179,6 @@ const ChartBuilding = () => {
       strokeColor: chartBorderLineColor,
       strokeWidth: chartBorderLineWidth,
       view: arcgisScene?.view,
-      setLayerViewFilter: setSublayerViewFilter,
       new_chartIconSize,
       new_axisFontSize,
       chartIconPositionX,
@@ -198,12 +194,6 @@ const ChartBuilding = () => {
 
   //-- Reset clicked event in chart series
   useEffect(() => {
-    if (sublayerViewFilter) {
-      sublayerViewFilter.filter = new FeatureFilter({
-        where: undefined,
-      });
-    }
-
     //--- Reset sublayers
     resetAllLayers({
       layers: sublayersAll,

@@ -6,8 +6,6 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import { thousands_separators, resetAllLayers } from "../query";
 import { civil_types_q, status_f, status_q } from "../uniqueValues";
-import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
-import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import { queryDefinitionExpression } from "../queryExpression";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
@@ -50,11 +48,10 @@ function useCivilWorkData(query: any, sublayersArray: any) {
 const ChartCivilWork = memo(() => {
   const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
   const [chartPanelwidth, setChartPanelwidth] = useState<any>();
+  const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
 
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
-  const [sublayerViewFilter, setSublayerViewFilter] = useState<SubLayerView>();
-  const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
   const chartID = "depot-civil-works";
 
   //--- Query expression
@@ -146,7 +143,6 @@ const ChartCivilWork = memo(() => {
       strokeColor: chartBorderLineColor,
       strokeWidth: chartBorderLineWidth,
       view: arcgisScene?.view,
-      setLayerViewFilter: setSublayerViewFilter,
       new_chartIconSize,
       new_axisFontSize,
       chartIconPositionX,
@@ -162,12 +158,6 @@ const ChartCivilWork = memo(() => {
 
   //-- Reset clicked event in chart series
   useEffect(() => {
-    if (sublayerViewFilter) {
-      sublayerViewFilter.filter = new FeatureFilter({
-        where: undefined,
-      });
-    }
-
     resetAllLayers({
       layers: sublayersCivilAll,
       qExpression: undefined,
