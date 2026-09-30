@@ -7,7 +7,7 @@ import * as am5xy from "@amcharts/amcharts5/xy";
 import { thousands_separators, resetAllLayers } from "../query";
 import { civil_types_q, status_f, status_q } from "../uniqueValues";
 import { queryDefinitionExpression } from "../queryExpression";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
 import ChartStackColumnRender from "chart-stack-column-render";
 import ChartStackColumns from "chart-stack-column";
@@ -40,6 +40,7 @@ function useCivilWorkData(query: any, sublayersArray: any) {
         perc: chartData[2] || 0,
       };
     },
+    placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
 }
@@ -52,6 +53,7 @@ const ChartCivilWork = memo(() => {
 
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
+  const rendererRef = useRef<ChartStackColumnRender | null>(null);
   const chartID = "depot-civil-works";
 
   //--- Query expression
@@ -81,16 +83,33 @@ const ChartCivilWork = memo(() => {
   //-------------------------------------//
   //    Responsive Chart parameters      //
   //-------------------------------------//
-  const new_fontSize = chartPanelwidth / 20;
-  const new_valueSize = new_fontSize * 1.55;
-  const new_chartIconSize = chartPanelwidth * 0.07;
-  const new_axisFontSize = chartPanelwidth * 0.036;
-  const new_imageSize = chartPanelwidth * 0.035;
+  const fontSize = chartPanelwidth / 20;
+  const valueSize = fontSize * 1.55;
+  const chartIconSize = chartPanelwidth * 0.07;
+  const axisFontSize = chartPanelwidth * 0.036;
 
+  //--- Keep click-handler-relevant values fresh without rebuilding the
+  //    chart. view lives here too (not passed statically to the
+  //    renderer) since arcgis-scene's view may not be ready on first
+  //    mount.
+  const configBaseArgs = {
+    revit: true,
+    layers: sublayersCivilAll,
+    buildingLayer: buildingLayer_cw,
+    chartCategoryTypeField: "DocName",
+    where: q1,
+    status_field: status_f,
+    view: arcgisScene?.view,
+  };
+
+  const configRef = useRef({ ...configBaseArgs });
+  useEffect(() => {
+    configRef.current = { ...configBaseArgs };
+  }, [data, status_f, arcgisScene]);
+
+  //---  Column Chart Renderer — created ONCE (mount only)
   useEffect(() => {
     const root = rootSetter({ chartID: chartID });
-    root.setThemes([]);
-
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
         panX: false,
@@ -118,43 +137,59 @@ const ChartCivilWork = memo(() => {
       x: 60,
       y: 97,
       marginTop: 20,
-      scale: 0.9,
       layout: root.horizontalLayout,
     });
     legendRef.current = legend;
 
-    const chartIconPositionX = 0;
-    //-- Chart render
-    new ChartStackColumnRender({
-      revit: true,
-      layers: sublayersCivilAll,
+    //--- NOTE: no `view` here — it's read live from configRef.current
+    //    inside chartrender.ts, since arcgis-scene may not have a
+    //    ready `.view` yet at this point.
+    const renderer = new ChartStackColumnRender({
       root,
       chart,
-      data: chartData,
-      buildingLayer: buildingLayer_cw,
-      where: q1,
+      data: [],
+      configRef,
       chartCategoryTypes: civil_types_q,
-      chartCategoryTypeField: "DocName",
-      statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
-      statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
+      statusTypename: ["Completed", "To be Constructed", "Under Construction"],
+      statusStatename: ["comp", "incomp", "ongoing"],
       statusArray: status_q,
-      statusField: status_f,
       seriesStatusColor: status_q.map((c: any) => c.color),
       strokeColor: chartBorderLineColor,
       strokeWidth: chartBorderLineWidth,
-      view: arcgisScene?.view,
-      new_chartIconSize,
-      new_axisFontSize,
-      chartIconPositionX,
+      chartIconSize,
+      axisFontSize,
+      chartIconPositionX: 0,
       chartPaddingRightIconLabel,
       legend,
       updateChartPanelwidth: setChartPanelwidth,
-    }).chartRendererColumn();
+    });
+    rendererRef.current = renderer;
+    renderer.chartRendererColumn();
 
     return () => {
       root.dispose();
+      rendererRef.current = null;
     };
-  }, [chartData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  //--- Push new data / inner value / affected-area figures into the
+  //    already-mounted chart. No dispose, no rebuild -> no blink.
+  //    NOTE: affectedAreaValue is NOT called here directly — it's
+  //    registered once inside chartrender.ts and reads live data via
+  //    closures, which updateData() keeps in sync. Calling it here on
+  //    every render would both miss the first paint and stack
+  //    duplicate adapters.
+  useEffect(() => {
+    const renderer = rendererRef.current;
+    if (!renderer || !chartPanelwidth) return; // wait for a real width
+
+    //--- Sizes are captured at construction, so refresh them here
+    renderer.chartIconSize = chartIconSize;
+    renderer.axisFontSize = axisFontSize;
+
+    renderer.updateData(chartData);
+  }, [chartData, chartPanelwidth]);
 
   //-- Reset clicked event in chart series
   useEffect(() => {
@@ -181,15 +216,15 @@ const ChartCivilWork = memo(() => {
         <img
           src="https://EijiGorilla.github.io/Symbols/Station_Structures_icon.svg"
           alt="Station Structure Logo"
-          height={`${new_imageSize}%`}
-          width={`${new_imageSize}%`}
+          height="55px"
+          width="55px"
           style={{ paddingTop: "20px", paddingLeft: "10px" }}
         />
         <dl style={{ alignItems: "center" }}>
           <dt
             style={{
               color: primaryLabelColor,
-              fontSize: `${new_fontSize}px`,
+              fontSize: `${fontSize}px`,
               marginRight: "20px",
             }}
           >
@@ -198,7 +233,7 @@ const ChartCivilWork = memo(() => {
           <dd
             style={{
               color: valueLabelColor,
-              fontSize: `${new_valueSize}px`,
+              fontSize: `${valueSize}px`,
               fontWeight: "bold",
               fontFamily: "calibri",
               lineHeight: "1.2",
@@ -210,7 +245,7 @@ const ChartCivilWork = memo(() => {
           <div
             style={{
               color: valueLabelColor,
-              fontSize: `${new_valueSize}*0.5px`,
+              fontSize: `${valueSize}*0.5px`,
               fontFamily: "calibri",
               lineHeight: "1.2",
             }}
