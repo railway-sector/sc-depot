@@ -551,26 +551,28 @@ export const cw_popup = {
 //---------------------------------//
 //           Layer List            //
 //---------------------------------//
+const HIDDEN_TITLES = new Set([
+  "Depot Civil Works",
+  "Land & Structure",
+  "ExteriorShell",
+  "ExteriorShell (Buildings)",
+  "StructuralFraming",
+  "Civil Works (LOD: 350)",
+  "Generic Model (Not Monitoring)",
+  "Ceilings (Not Monitoring)",
+  "Stairs (Not Monitoring)",
+  "Roofs (Not Monitoring)",
+  "Windows (Not Monitoring)",
+  "Infrastructure",
+  "Roads",
+  "Pedestrian",
+  "French Drain",
+]);
+
 export async function defineActions(event: any) {
   const { item } = event;
   if (item.layer.type !== "group") {
     item.panel = { content: "legend", open: true };
   }
-  item.title === "Depot Civil Works" ||
-  item.title === "Land & Structure" ||
-  item.title === "ExteriorShell" ||
-  item.title === "ExteriorShell (Buildings)" ||
-  item.title === "StructuralFraming" ||
-  item.title === "Civil Works (LOD: 350)" ||
-  item.title === "Generic Model (Not Monitoring)" ||
-  item.title === "Ceilings (Not Monitoring)" ||
-  item.title === "Stairs (Not Monitoring)" ||
-  item.title === "Roofs (Not Monitoring)" ||
-  item.title === "Windows (Not Monitoring)" ||
-  item.title === "Infrastructure" ||
-  item.title === "Roads" ||
-  item.title === "Pedestrian" ||
-  item.title === "French Drain"
-    ? (item.visible = false)
-    : (item.visible = true);
+  item.visible = !HIDDEN_TITLES.has(item.title);
 }
