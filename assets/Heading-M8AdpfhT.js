@@ -1,0 +1,1 @@
+import{ew as o,ex as s,ey as c,ez as u}from"./index-DMsPDPDk.js";function h({level:e,class:n,...t},i){let a=r(e),l=`h${a}`;return o(l,{...t,"aria-level":String(a),class:s(c.heading,n),role:"heading"},i)}function r(e){return u(Math.ceil(e),1,6)}function g(e,n=1){return r(e+n)}export{h as i,g as o};

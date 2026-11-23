@@ -1,0 +1,1 @@
+import{k0 as e,k1 as f}from"./index-DMsPDPDk.js";function o(r,u){return u.push(r.buffer),{buffer:r.buffer,layout:new e(r.layout)}}function t(r){return new f(r.layout).createView(r.buffer)}export{o as n,t as r};
